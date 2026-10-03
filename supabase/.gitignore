@@ -1,6 +1,8 @@
 # Supabase
 .branches
 .temp
+# SQL Editor snippets saved by local Studio
+snippets
 
 # dotenvx
 .env.keys
