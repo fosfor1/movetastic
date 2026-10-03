@@ -297,27 +297,27 @@ New table only; no existing data. Locally and in CI the migration is applied by 
 
 #### Automated
 
-- [x] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 566587c
 
 #### Manual
 
-- [x] 2.2 On a phone-width viewport, sign-in lands on `/dashboard` with the "Dodaj trening" button and the empty state
-- [x] 2.3 Adding a workout with distance `10,5`, HR `145` and today's date redirects to `/dashboard` and lists it as `10,50 km`
-- [x] 2.4 A workout dated 6 days ago is listed; one dated 7 days ago is not
-- [x] 2.5 Future date, distance `0` and HR `300` are each rejected with a Polish message (client-side, and server-side when posted directly)
-- [x] 2.6 The distance field opens a numeric keyboard on Android (or in mobile emulation)
-- [x] 2.7 Smoke passes against a local preview with local Supabase: `npm run smoke`
+- [x] 2.2 On a phone-width viewport, sign-in lands on `/dashboard` with the "Dodaj trening" button and the empty state — 566587c
+- [x] 2.3 Adding a workout with distance `10,5`, HR `145` and today's date redirects to `/dashboard` and lists it as `10,50 km` — 566587c
+- [x] 2.4 A workout dated 6 days ago is listed; one dated 7 days ago is not — 566587c
+- [x] 2.5 Future date, distance `0` and HR `300` are each rejected with a Polish message (client-side, and server-side when posted directly) — 566587c
+- [x] 2.6 The distance field opens a numeric keyboard on Android (or in mobile emulation) — 566587c
+- [x] 2.7 Smoke passes against a local preview with local Supabase: `npm run smoke` — 566587c
 
 ### Phase 3: Isolation check and production rollout
 
 #### Automated
 
-- [ ] 3.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [ ] 3.2 Smoke passes against a local preview with local Supabase: `npm run smoke`
+- [x] 3.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 3.2 Smoke passes against a local preview with local Supabase: `npm run smoke`
 - [ ] 3.3 CI workflow jobs `ci` and `smoke` pass on push (requires a git remote; until one is configured, record this step as skipped rather than passed)
 
 #### Manual
 
-- [ ] 3.4 Production migration applied by a human: `npx supabase link` + `npx supabase db push`, and `workouts` with RLS is visible in the hosted Supabase dashboard
-- [ ] 3.5 Worker deployed after the migration; on production a workout added by account A is visible to A and not to account B
-- [ ] 3.6 Smoke users `smoke-…@example.com` created against production (if smoke is run there) are deleted in Supabase → Authentication → Users
+- [x] 3.4 Production migration applied by a human: `npx supabase link` + `npx supabase db push`, and `workouts` with RLS is visible in the hosted Supabase dashboard
+- [x] 3.5 Worker deployed after the migration; on production a workout added by account A is visible to A and not to account B
+- [x] 3.6 Smoke users `smoke-…@example.com` created against production (if smoke is run there) are deleted in Supabase → Authentication → Users
