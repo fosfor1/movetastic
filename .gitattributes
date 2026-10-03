@@ -1,0 +1,11 @@
+# Normalize text files to LF in the repo and the working tree on every OS (Prettier's default endOfLine is "lf").
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
