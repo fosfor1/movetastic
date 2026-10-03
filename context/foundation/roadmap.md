@@ -39,7 +39,7 @@ Amator biegowy trenujący samodzielnie codziennie zastanawia się, jaki trening 
 
 | ID   | Change ID                 | Outcome (user can …)                                                             | Prerequisites | PRD refs                       | Status   |
 | ---- | ------------------------- | -------------------------------------------------------------------------------- | ------------- | ------------------------------ | -------- |
-| S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01          | in-progress |
+| S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01          | done     |
 | S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę              | S-01          | US-01, FR-003                  | blocked  |
 | S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś    | S-02          | FR-003, FR-006, US-01          | proposed |
 
@@ -71,7 +71,7 @@ Brak. Auth i deploy są już obecne (Baseline), a brakująca warstwa danych jest
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Pierwsza tabela z danymi użytkownika — tutaj ustala się wzorzec izolacji danych (guardrail prywatności); błąd przeniesie się na wszystkie kolejne wycinki, więc weryfikacja „użytkownik B nie widzi treningów A” jest częścią tego wycinka.
-- **Status:** in-progress
+- **Status:** done
 
 ### S-02: Obciążenie treningowe z ostatnich 7 dni na ekranie głównym
 
@@ -128,3 +128,5 @@ Brak. Auth i deploy są już obecne (Baseline), a brakująca warstwa danych jest
 ## Milestone History
 
 ## Done
+
+- **S-01: user can po zalogowaniu na ekranie głównym (na telefonie z Androidem) wybrać „dodaj trening”, wpisać datę (dzisiejszą lub z przeszłości), dystans i średnie tętno, i zobaczyć swoje treningi z ostatnich 7 dni — a żaden inny użytkownik ich nie widzi.** — Archived 2026-10-03 → `context/archive/2026-10-03-log-completed-workout/`. Lesson: —.
