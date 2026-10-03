@@ -1,6 +1,7 @@
 // Smoke test: proves the built app, the Cloudflare adapter and the Supabase auth flow still work together,
 // that a signed-in user can log a workout and see it on /dashboard (with validation rejecting bad input),
-// and that a second user does not see the first user's workouts (per-user isolation).
+// that the dashboard shows the weekly training load computed from that workout (distance_km × avg_heart_rate / 100),
+// and that a second user sees neither the first user's workouts nor their load (per-user isolation).
 // Zero dependencies on purpose. Run against a live server: BASE_URL=http://localhost:4321 node scripts/smoke.mjs
 
 const BASE_URL = process.env.BASE_URL ?? "http://localhost:4321";
@@ -39,6 +40,11 @@ const distanceInput = distanceKm.toFixed(2);
 const distanceDisplay = new Intl.NumberFormat("pl-PL", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
   distanceKm,
 );
+// Mirrors src/lib/training-load.ts (formula) + src/pages/dashboard.astro (formatter); the workout is logged at HR 150.
+const loadDisplay = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 }).format((distanceKm * 150) / 100);
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// Matches the load number inside its marked element, so it cannot collide with other numbers on the page.
+const weeklyLoadPattern = (display) => new RegExp(`data-testid="weekly-load"[^>]*>\\s*${escapeRegExp(display)}\\s*<`);
 const EMPTY_STATE = "Brak treningów z ostatnich 7 dni.";
 
 function cookieHeader() {
@@ -104,7 +110,11 @@ const steps = [
     () => postWorkout({}),
     { status: 302, location: "/dashboard" },
   ],
-  ["A: dashboard lists the new workout", () => request("/dashboard"), { status: 200, bodyIncludes: distanceDisplay }],
+  [
+    `A: dashboard lists the new workout with weekly load ${loadDisplay}`,
+    () => request("/dashboard"),
+    { status: 200, bodyIncludes: distanceDisplay, bodyMatches: weeklyLoadPattern(loadDisplay) },
+  ],
   [
     "A: heart rate 500 is rejected",
     () => postWorkout({ avg_heart_rate: "500" }),
@@ -135,7 +145,7 @@ const steps = [
   [
     "B: dashboard shows empty state, not A's workout",
     () => request("/dashboard"),
-    { status: 200, bodyIncludes: EMPTY_STATE, bodyExcludes: distanceDisplay },
+    { status: 200, bodyIncludes: EMPTY_STATE, bodyExcludes: distanceDisplay, bodyMatches: weeklyLoadPattern("0") },
   ],
   ["B: signout clears session", () => request("/api/auth/signout", { method: "POST" }), { status: 302, location: "/" }],
 ];
@@ -153,6 +163,9 @@ for (const [name, run, expected] of steps) {
   }
   if (expected.bodyExcludes !== undefined && actual.body.includes(expected.bodyExcludes)) {
     problems.push(`expected body to exclude "${expected.bodyExcludes}"`);
+  }
+  if (expected.bodyMatches !== undefined && !expected.bodyMatches.test(actual.body)) {
+    problems.push(`expected body to match ${expected.bodyMatches}`);
   }
   const ok = problems.length === 0;
   console.log(`${ok ? "PASS" : "FAIL"}  ${name}  -> ${actual.status} ${actual.location}`);
