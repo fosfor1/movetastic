@@ -284,29 +284,29 @@ New table only; no existing data. Locally and in CI the migration is applied by 
 
 #### Automated
 
-- [x] 1.1 Migration applies on a clean local database: `npx supabase db reset`
-- [x] 1.2 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 1.1 Migration applies on a clean local database: `npx supabase db reset` — 646e56f
+- [x] 1.2 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 646e56f
 
 #### Manual
 
-- [x] 1.3 In local Supabase Studio, `workouts` shows RLS enabled with exactly the two policies `workouts_select_own` and `workouts_insert_own`
-- [x] 1.4 Inserting a row with `distance_km = 500` in the SQL editor fails on the CHECK constraint
-- [x] 1.5 Local environment ready (do first): Docker Desktop running, `npx supabase start` succeeds, `.dev.vars` holds the local `SUPABASE_URL` / `SUPABASE_KEY`
+- [x] 1.3 In local Supabase Studio, `workouts` shows RLS enabled with exactly the two policies `workouts_select_own` and `workouts_insert_own` — 646e56f
+- [x] 1.4 Inserting a row with `distance_km = 500` in the SQL editor fails on the CHECK constraint — 646e56f
+- [x] 1.5 Local environment ready (do first): Docker Desktop running, `npx supabase start` succeeds, `.dev.vars` holds the local `SUPABASE_URL` / `SUPABASE_KEY` — 646e56f
 
 ### Phase 2: Add-workout and 7-day list flow
 
 #### Automated
 
-- [ ] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
 
 #### Manual
 
-- [ ] 2.2 On a phone-width viewport, sign-in lands on `/dashboard` with the "Dodaj trening" button and the empty state
-- [ ] 2.3 Adding a workout with distance `10,5`, HR `145` and today's date redirects to `/dashboard` and lists it as `10,50 km`
-- [ ] 2.4 A workout dated 6 days ago is listed; one dated 7 days ago is not
-- [ ] 2.5 Future date, distance `0` and HR `300` are each rejected with a Polish message (client-side, and server-side when posted directly)
-- [ ] 2.6 The distance field opens a numeric keyboard on Android (or in mobile emulation)
-- [ ] 2.7 Smoke passes against a local preview with local Supabase: `npm run smoke`
+- [x] 2.2 On a phone-width viewport, sign-in lands on `/dashboard` with the "Dodaj trening" button and the empty state
+- [x] 2.3 Adding a workout with distance `10,5`, HR `145` and today's date redirects to `/dashboard` and lists it as `10,50 km`
+- [x] 2.4 A workout dated 6 days ago is listed; one dated 7 days ago is not
+- [x] 2.5 Future date, distance `0` and HR `300` are each rejected with a Polish message (client-side, and server-side when posted directly)
+- [x] 2.6 The distance field opens a numeric keyboard on Android (or in mobile emulation)
+- [x] 2.7 Smoke passes against a local preview with local Supabase: `npm run smoke`
 
 ### Phase 3: Isolation check and production rollout
 
