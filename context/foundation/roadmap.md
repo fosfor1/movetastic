@@ -37,11 +37,11 @@ Amator biegowy trenujący samodzielnie codziennie zastanawia się, jaki trening 
 
 ## At a glance
 
-| ID   | Change ID                 | Outcome (user can …)                                                             | Prerequisites | PRD refs                       | Status   |
-| ---- | ------------------------- | -------------------------------------------------------------------------------- | ------------- | ------------------------------ | -------- |
-| S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01          | done     |
-| S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę              | S-01          | US-01, FR-003                  | in-progress |
-| S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś    | S-02          | FR-003, FR-006, US-01          | proposed |
+| ID   | Change ID                 | Outcome (user can …)                                                               | Prerequisites | PRD refs              | Status      |
+| ---- | ------------------------- | ---------------------------------------------------------------------------------- | ------------- | --------------------- | ----------- |
+| S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01 | done        |
+| S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę               | S-01          | US-01, FR-003         | in-progress |
+| S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś     | S-02          | FR-003, FR-006, US-01 | proposed    |
 
 ## Baseline
 
@@ -102,11 +102,11 @@ Brak. Auth i deploy są już obecne (Baseline), a brakująca warstwa danych jest
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID                 | Suggested issue title                                         | Ready for `/10x-plan` | Notes                                                    |
-| ---------- | ------------------------- | ------------------------------------------------------------- | --------------------- | -------------------------------------------------------- |
-| S-01       | log-completed-workout     | Dodawanie ukończonego treningu i lista z ostatnich 7 dni      | yes                   | Run `/10x-plan log-completed-workout`                    |
-| S-02       | weekly-training-load      | Obciążenie treningowe z 7 dni na ekranie głównym              | yes                   | Wzór rozstrzygnięty (OQ3); plan: `context/changes/weekly-training-load/plan.md` |
-| S-03       | todays-workout-suggestion | Sugestia treningu na dziś po wskazaniu samopoczucia           | no                    | Po S-02; gwiazda przewodnia; wzór obciążenia już rozstrzygnięty (OQ3) |
+| Roadmap ID | Change ID                 | Suggested issue title                                    | Ready for `/10x-plan` | Notes                                                                           |
+| ---------- | ------------------------- | -------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------- |
+| S-01       | log-completed-workout     | Dodawanie ukończonego treningu i lista z ostatnich 7 dni | yes                   | Run `/10x-plan log-completed-workout`                                           |
+| S-02       | weekly-training-load      | Obciążenie treningowe z 7 dni na ekranie głównym         | yes                   | Wzór rozstrzygnięty (OQ3); plan: `context/changes/weekly-training-load/plan.md` |
+| S-03       | todays-workout-suggestion | Sugestia treningu na dziś po wskazaniu samopoczucia      | no                    | Po S-02; gwiazda przewodnia; wzór obciążenia już rozstrzygnięty (OQ3)           |
 
 ## Open Roadmap Questions
 
