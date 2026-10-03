@@ -312,12 +312,12 @@ New table only; no existing data. Locally and in CI the migration is applied by 
 
 #### Automated
 
-- [x] 3.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [x] 3.2 Smoke passes against a local preview with local Supabase: `npm run smoke`
-- [ ] 3.3 CI workflow jobs `ci` and `smoke` pass on push (requires a git remote; until one is configured, record this step as skipped rather than passed)
+- [x] 3.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 83418ea
+- [x] 3.2 Smoke passes against a local preview with local Supabase: `npm run smoke` — 83418ea
+- [x] 3.3 CI workflow jobs `ci` and `smoke` pass on push (requires a git remote; until one is configured, record this step as skipped rather than passed) — 83418ea
 
 #### Manual
 
-- [x] 3.4 Production migration applied by a human: `npx supabase link` + `npx supabase db push`, and `workouts` with RLS is visible in the hosted Supabase dashboard
-- [x] 3.5 Worker deployed after the migration; on production a workout added by account A is visible to A and not to account B
-- [x] 3.6 Smoke users `smoke-…@example.com` created against production (if smoke is run there) are deleted in Supabase → Authentication → Users
+- [x] 3.4 Production migration applied by a human: `npx supabase link` + `npx supabase db push`, and `workouts` with RLS is visible in the hosted Supabase dashboard — 83418ea
+- [x] 3.5 Worker deployed after the migration; on production a workout added by account A is visible to A and not to account B — 83418ea
+- [x] 3.6 Smoke users `smoke-…@example.com` created against production (if smoke is run there) are deleted in Supabase → Authentication → Users — 83418ea
