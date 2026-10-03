@@ -188,22 +188,22 @@ None. There are no schema changes, and existing workouts count immediately.
 
 #### Automated
 
-- [x] 1.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 1.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 127491c
 
 #### Manual
 
-- [x] 1.2 On `npm run dev`, a user with no workouts in the window sees the card with `0`
-- [x] 1.3 After adding 10 km at HR 150 the card shows `15`; after also adding 5,5 km at HR 140 it shows `23`
-- [x] 1.4 A workout dated today−7 does not change the number, and one dated today−6 does
-- [x] 1.5 The card is readable on an Android-width viewport (~360 px) and sits above "Dodaj trening"
+- [x] 1.2 On `npm run dev`, a user with no workouts in the window sees the card with `0` — 127491c
+- [x] 1.3 After adding 10 km at HR 150 the card shows `15`; after also adding 5,5 km at HR 140 it shows `23` — 127491c
+- [x] 1.4 A workout dated today−7 does not change the number, and one dated today−6 does — 127491c
+- [x] 1.5 The card is readable on an Android-width viewport (~360 px) and sits above "Dodaj trening" — 127491c
 
 ### Phase 2: Smoke verification and production rollout
 
 #### Automated
 
-- [ ] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [ ] 2.2 `npm run smoke` passes against a local server with local Supabase, including the A-load and B-zero steps
+- [x] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 2.2 `npm run smoke` passes against a local server with local Supabase, including the A-load and B-zero steps
 
 #### Manual
 
-- [ ] 2.3 After deploy, on production a signed-in user sees the load card, and adding a workout updates the number as expected
+- [x] 2.3 After deploy, on production a signed-in user sees the load card, and adding a workout updates the number as expected
