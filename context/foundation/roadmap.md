@@ -40,7 +40,7 @@ Amator biegowy trenujący samodzielnie codziennie zastanawia się, jaki trening 
 | ID   | Change ID                 | Outcome (user can …)                                                               | Prerequisites | PRD refs              | Status      |
 | ---- | ------------------------- | ---------------------------------------------------------------------------------- | ------------- | --------------------- | ----------- |
 | S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01 | done        |
-| S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę               | S-01          | US-01, FR-003         | in-progress |
+| S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę               | S-01          | US-01, FR-003         | done        |
 | S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś     | S-02          | FR-003, FR-006, US-01 | proposed    |
 
 ## Baseline
@@ -84,7 +84,7 @@ Brak. Auth i deploy są już obecne (Baseline), a brakująca warstwa danych jest
 - **Unknowns:**
   - ~~Jak dokładnie liczyć obciążenie z dystansu i średniego tętna (wzór i skala), tak żeby próg „np. 100” z Business Logic miał sens?~~ — Rozstrzygnięte: obciążenie = Σ (dystans_km × śr. tętno / 100) z okna today−6…today (10 km przy tętnie 150 = 15); patrz `context/changes/weekly-training-load/plan.md`. — Owner: user. Block: no.
 - **Risk:** Wzór obciążenia to rdzeń domeny i najbardziej ryzykowne założenie MVP (Open Question 1); zła skala unieważni próg w S-03, dlatego obciążenie jest osobnym, wcześniejszym wycinkiem.
-- **Status:** in-progress
+- **Status:** done
 
 ### S-03: Sugestia treningu na dziś po wskazaniu samopoczucia
 
@@ -130,3 +130,4 @@ Brak. Auth i deploy są już obecne (Baseline), a brakująca warstwa danych jest
 ## Done
 
 - **S-01: user can po zalogowaniu na ekranie głównym (na telefonie z Androidem) wybrać „dodaj trening”, wpisać datę (dzisiejszą lub z przeszłości), dystans i średnie tętno, i zobaczyć swoje treningi z ostatnich 7 dni — a żaden inny użytkownik ich nie widzi.** — Archived 2026-10-03 → `context/archive/2026-10-03-log-completed-workout/`. Lesson: —.
+- **S-02: user can zobaczyć na ekranie głównym wyliczone obciążenie treningowe z ostatnich 7 dni jako konkretną liczbę, aktualizowaną po dodaniu treningu.** — Archived 2026-10-03 → `context/archive/2026-10-03-weekly-training-load/`. Lesson: —.
