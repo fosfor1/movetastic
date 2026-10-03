@@ -40,7 +40,7 @@ Amator biegowy trenujący samodzielnie codziennie zastanawia się, jaki trening 
 | ID   | Change ID                 | Outcome (user can …)                                                             | Prerequisites | PRD refs                       | Status   |
 | ---- | ------------------------- | -------------------------------------------------------------------------------- | ------------- | ------------------------------ | -------- |
 | S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01          | done     |
-| S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę              | S-01          | US-01, FR-003                  | blocked  |
+| S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę              | S-01          | US-01, FR-003                  | in-progress |
 | S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś    | S-02          | FR-003, FR-006, US-01          | proposed |
 
 ## Baseline
@@ -82,9 +82,9 @@ Brak. Auth i deploy są już obecne (Baseline), a brakująca warstwa danych jest
 - **Parallel with:** —
 - **Blockers:** —
 - **Unknowns:**
-  - Jak dokładnie liczyć obciążenie z dystansu i średniego tętna (wzór i skala), tak żeby próg „np. 100” z Business Logic miał sens? — Owner: user. Block: yes.
+  - ~~Jak dokładnie liczyć obciążenie z dystansu i średniego tętna (wzór i skala), tak żeby próg „np. 100” z Business Logic miał sens?~~ — Rozstrzygnięte: obciążenie = Σ (dystans_km × śr. tętno / 100) z okna today−6…today (10 km przy tętnie 150 = 15); patrz `context/changes/weekly-training-load/plan.md`. — Owner: user. Block: no.
 - **Risk:** Wzór obciążenia to rdzeń domeny i najbardziej ryzykowne założenie MVP (Open Question 1); zła skala unieważni próg w S-03, dlatego obciążenie jest osobnym, wcześniejszym wycinkiem.
-- **Status:** blocked
+- **Status:** in-progress
 
 ### S-03: Sugestia treningu na dziś po wskazaniu samopoczucia
 
@@ -105,14 +105,14 @@ Brak. Auth i deploy są już obecne (Baseline), a brakująca warstwa danych jest
 | Roadmap ID | Change ID                 | Suggested issue title                                         | Ready for `/10x-plan` | Notes                                                    |
 | ---------- | ------------------------- | ------------------------------------------------------------- | --------------------- | -------------------------------------------------------- |
 | S-01       | log-completed-workout     | Dodawanie ukończonego treningu i lista z ostatnich 7 dni      | yes                   | Run `/10x-plan log-completed-workout`                    |
-| S-02       | weekly-training-load      | Obciążenie treningowe z 7 dni na ekranie głównym              | no                    | Czeka na decyzję o wzorze obciążenia; po S-01            |
-| S-03       | todays-workout-suggestion | Sugestia treningu na dziś po wskazaniu samopoczucia           | no                    | Po S-02; gwiazda przewodnia                              |
+| S-02       | weekly-training-load      | Obciążenie treningowe z 7 dni na ekranie głównym              | yes                   | Wzór rozstrzygnięty (OQ3); plan: `context/changes/weekly-training-load/plan.md` |
+| S-03       | todays-workout-suggestion | Sugestia treningu na dziś po wskazaniu samopoczucia           | no                    | Po S-02; gwiazda przewodnia; wzór obciążenia już rozstrzygnięty (OQ3) |
 
 ## Open Roadmap Questions
 
 1. **Czy dystans + średnie tętno wystarczą jako dane wejściowe, czy sugestia wymaga bogatszych danych (tempo, teren, odczuwany wysiłek)?** — Owner: user. Block: — (świadomy kompromis MVP; wraca przy kolejnej iteracji).
 2. **Czy próg obciążenia w regule sugestii powinien być zindywidualizowany per użytkownik zamiast jednej stałej wartości dla wszystkich?** — Owner: user. Block: — (MVP przyjmuje jeden wspólny próg).
-3. **Jaki jest wzór obciążenia treningowego z dystansu i średniego tętna i w jakiej skali?** — Owner: user. Block: S-02, S-03.
+3. **Jaki jest wzór obciążenia treningowego z dystansu i średniego tętna i w jakiej skali?** — Owner: user. Block: — (rozstrzygnięte w S-02: obciążenie = Σ (dystans_km × śr. tętno / 100) z okna today−6…today, np. 10 km przy tętnie 150 = 15; patrz `context/changes/weekly-training-load/plan.md`).
 4. **US-01 wymaga przycisku „edytuj trening” na ekranie głównym, a FR-005 (edycja) jest poza MVP — czy przycisk pokazujemy w MVP?** — Owner: user. Block: — (do czasu decyzji S-01 pokazuje tylko „dodaj trening” i „sugestia na dziś”; edycja w Parked).
 
 ## Parked
