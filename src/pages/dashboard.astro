@@ -1,27 +1,84 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import { todayInAppTimeZone } from "@/lib/dates";
+import { listRecentWorkouts } from "@/lib/workouts";
+import type { Workout } from "@/types";
 
 const { user } = Astro.locals;
+
+let workouts: Workout[] = [];
+let listError: string | null;
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+if (!supabase) {
+  listError = "Nie można wczytać treningów: Supabase nie jest skonfigurowany.";
+} else {
+  const result = await listRecentWorkouts(supabase, todayInAppTimeZone());
+  workouts = result.data;
+  listError = result.error;
+}
+
+const dateFormatter = new Intl.DateTimeFormat("pl-PL", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  timeZone: "UTC",
+});
+const distanceFormatter = new Intl.NumberFormat("pl-PL", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function formatDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  const formatted = dateFormatter.format(new Date(Date.UTC(year, month - 1, day)));
+  // Capitalize only the weekday; Polish month names stay lowercase.
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+}
 ---
 
-<Layout title="Dashboard">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl">
-      <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-        Dashboard
+<Layout title="Twoje treningi">
+  <div class="bg-cosmic min-h-screen p-4">
+    <div class="mx-auto w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-6 text-white backdrop-blur-xl sm:p-8">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <p class="min-w-0 truncate text-sm text-blue-100/80">
+          Zalogowano jako <span class="font-semibold text-white">{user?.email}</span>
+        </p>
+        <form method="POST" action="/api/auth/signout">
+          <button
+            type="submit"
+            class="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-sm transition-colors hover:bg-white/20"
+          >
+            Wyloguj
+          </button>
+        </form>
+      </div>
+
+      <a
+        href="/dashboard/workouts/new"
+        class="mt-6 block w-full rounded-lg bg-purple-600 px-4 py-2 text-center font-medium text-white transition-colors hover:bg-purple-500"
+      >
+        Dodaj trening
+      </a>
+
+      <h1 class="mt-8 mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-xl font-bold text-transparent sm:text-2xl">
+        Twoje treningi z ostatnich 7 dni
       </h1>
-      <p class="text-blue-100/80">
-        Welcome, <span class="font-semibold text-white">{user?.email}</span>
-      </p>
-      <p class="mt-2 text-sm text-blue-100/50">This page is only for authenticated users.</p>
-      <form method="POST" action="/api/auth/signout" class="mt-6">
-        <button
-          type="submit"
-          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
-        >
-          Sign out
-        </button>
-      </form>
+
+      {listError ? (
+        <p class="rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">{listError}</p>
+      ) : workouts.length === 0 ? (
+        <p class="text-sm text-blue-100/60">Brak treningów z ostatnich 7 dni.</p>
+      ) : (
+        <ul class="space-y-2">
+          {workouts.map((workout) => (
+            <li class="rounded-lg border border-white/10 bg-white/5 px-4 py-3">
+              <p class="font-medium">{formatDate(workout.workout_date)}</p>
+              <p class="mt-1 text-sm text-blue-100/80">
+                {distanceFormatter.format(workout.distance_km)} km · śr. tętno {workout.avg_heart_rate} ud/min
+              </p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   </div>
 </Layout>

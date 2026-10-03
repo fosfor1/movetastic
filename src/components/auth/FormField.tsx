@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import { CircleAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +17,8 @@ interface FormFieldProps {
   hint?: ReactNode;
   icon: ReactNode;
   endContent?: ReactNode;
+  inputMode?: HTMLAttributes<HTMLInputElement>["inputMode"];
+  max?: string;
 }
 
 export function FormField({
@@ -31,6 +33,8 @@ export function FormField({
   hint,
   icon,
   endContent,
+  inputMode,
+  max,
 }: FormFieldProps) {
   return (
     <div>
@@ -48,6 +52,8 @@ export function FormField({
             onChange(e.target.value);
           }}
           placeholder={placeholder}
+          inputMode={inputMode}
+          max={max}
           className={cn(
             inputBase,
             error ? "border-red-400/60 focus:ring-red-400" : "border-white/20 focus:ring-purple-400",
