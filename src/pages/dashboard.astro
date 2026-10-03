@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import { createClient } from "@/lib/supabase";
 import { todayInAppTimeZone } from "@/lib/dates";
 import { listRecentWorkouts } from "@/lib/workouts";
+import { weeklyTrainingLoad } from "@/lib/training-load";
 import type { Workout } from "@/types";
 
 const { user } = Astro.locals;
@@ -18,6 +19,9 @@ if (!supabase) {
   workouts = result.data;
   listError = result.error;
 }
+
+const weeklyLoad = listError ? null : weeklyTrainingLoad(workouts);
+const loadFormatter = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 });
 
 const dateFormatter = new Intl.DateTimeFormat("pl-PL", {
   weekday: "long",
@@ -51,6 +55,16 @@ function formatDate(isoDate: string): string {
           </button>
         </form>
       </div>
+
+      {weeklyLoad !== null && (
+        <div class="mt-6 rounded-lg border border-white/10 bg-white/5 px-4 py-3">
+          <p class="text-sm text-blue-100/80">Obciążenie z ostatnich 7 dni</p>
+          <p class="mt-1 text-3xl font-bold" data-testid="weekly-load">
+            {loadFormatter.format(weeklyLoad)}
+          </p>
+          <p class="mt-1 text-xs text-blue-100/60">Suma z treningów: dystans (km) × średnie tętno ÷ 100</p>
+        </div>
+      )}
 
       <a
         href="/dashboard/workouts/new"
