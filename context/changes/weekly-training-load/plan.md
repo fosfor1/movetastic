@@ -201,9 +201,9 @@ None. There are no schema changes, and existing workouts count immediately.
 
 #### Automated
 
-- [x] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [x] 2.2 `npm run smoke` passes against a local server with local Supabase, including the A-load and B-zero steps
+- [x] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 343ab17
+- [x] 2.2 `npm run smoke` passes against a local server with local Supabase, including the A-load and B-zero steps — 343ab17
 
 #### Manual
 
-- [x] 2.3 After deploy, on production a signed-in user sees the load card, and adding a workout updates the number as expected
+- [x] 2.3 After deploy, on production a signed-in user sees the load card, and adding a workout updates the number as expected — 343ab17
