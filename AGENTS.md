@@ -28,6 +28,13 @@ Movetastic is a web app that suggests a runner's workout for today based on rece
 
 Formatting and lint (`@.prettierrc.json`, `@eslint.config.js`) run via husky/lint-staged on commit. No `"use client"` directives; put React hooks in `src/components/hooks/`.
 
+## UI
+
+- Tokens live in `src/styles/global.css`: values in `:root`/`.dark`, published as utilities via `@theme inline`. The app runs `.dark` (set on `<html>` in `src/layouts/Layout.astro`); where its values came from: `context/changes/dashboard-ui-tokens/theme-values.md`.
+- Components: check `src/components/ui/` before creating one; add missing shadcn ones via `npx shadcn@latest add <name>`.
+- No palette classes (`text-blue-500`, `bg-white`), hex/rgb/hsl/oklch literals or arbitrary values (`p-[13px]`) in views; use role tokens (`bg-card`, `text-muted-foreground`, `border-border`). A missing role goes into `global.css`, not the view.
+- Gate: check states in the kitchen sink at `/dev/kitchen-sink/dashboard` (dev only); `npm run lint:ui` (`scripts/check-ui-literals.mjs`) enforces the cleaned files — add a view to its file list once it is cleaned.
+
 ## Testing
 
 No unit test suite exists yet; `scripts/smoke.mjs` is the only automated check. Verify every change with the CI gate from Commands, and additionally run `npm run smoke` after changes to `src/middleware.ts`, `src/lib/supabase.ts`, or anything under `src/pages/api/auth/` or `src/pages/auth/`.
