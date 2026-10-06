@@ -30,7 +30,7 @@ Formatting and lint (`@.prettierrc.json`, `@eslint.config.js`) run via husky/lin
 
 ## UI
 
-- Tokens live in `src/styles/global.css`: values in `:root`/`.dark`, published as utilities via `@theme inline`. The app runs `.dark` (set on `<html>` in `src/layouts/Layout.astro`); where its values came from: `context/changes/dashboard-ui-tokens/theme-values.md`.
+- Tokens live in `src/styles/global.css`: values in `:root`/`.dark`, published as utilities via `@theme inline`. The app runs `.dark` (set on `<html>` in `src/layouts/Layout.astro`); where its values came from: `context/archive/2026-10-06-dashboard-ui-tokens/theme-values.md`.
 - Components: check `src/components/ui/` before creating one; add missing shadcn ones via `npx shadcn@latest add <name>`.
 - No palette classes (`text-blue-500`, `bg-white`), hex/rgb/hsl/oklch literals or arbitrary values (`p-[13px]`) in views; use role tokens (`bg-card`, `text-muted-foreground`, `border-border`). A missing role goes into `global.css`, not the view.
 - Gate: check states in the kitchen sink at `/dev/kitchen-sink/dashboard` (dev only); `npm run lint:ui` (`scripts/check-ui-literals.mjs`) enforces the cleaned files — add a view to its file list once it is cleaned.
