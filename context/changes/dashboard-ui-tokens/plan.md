@@ -343,24 +343,24 @@ Switching `.dark` on is global. The other `bg-cosmic` views keep their literal c
 
 #### Automated
 
-- [x] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [x] 2.2 Hex in `global.css` only inside `:root`/`.dark` value lines
+- [x] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 4803973
+- [x] 2.2 Hex in `global.css` only inside `:root`/`.dark` value lines — 4803973
 
 #### Manual
 
-- [x] 2.3 Screenshots of `/dashboard`, `/auth/signin`, `/dashboard/workouts/new` at desktop and 375 px look the same as before
+- [x] 2.3 Screenshots of `/dashboard`, `/auth/signin`, `/dashboard/workouts/new` at desktop and 375 px look the same as before — 4803973
 
 ### Phase 3: Dashboard view on tokens and components
 
 #### Automated
 
-- [ ] 3.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [ ] 3.2 Hardcoded-value scan on `dashboard.astro` + `DashboardView.astro` returns 0 lines (was 13)
-- [ ] 3.3 `npm run smoke` passes against `npm run dev` with local Supabase
+- [x] 3.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 3.2 Hardcoded-value scan on `dashboard.astro` + `DashboardView.astro` returns 0 lines (was 13)
+- [x] 3.3 `npm run smoke` passes against `npm run dev` with local Supabase
 
 #### Manual
 
-- [ ] 3.4 `/dashboard` at desktop and 375 px: same hierarchy, CTA in primary, `h1` is the first heading
+- [x] 3.4 `/dashboard` at desktop and 375 px: same hierarchy, CTA in primary, `h1` is the first heading
 
 ### Phase 4: States and visual gate
 
