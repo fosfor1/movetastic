@@ -25,5 +25,7 @@ const weeklyLoad = listError ? null : weeklyTrainingLoad(workouts);
 ---
 
 <Layout title="Twoje treningi">
-  <DashboardView email={user?.email} weeklyLoad={weeklyLoad} workouts={workouts} listError={listError} />
+  <div class="bg-cosmic min-h-screen p-4">
+    <DashboardView email={user?.email} weeklyLoad={weeklyLoad} workouts={workouts} listError={listError} />
+  </div>
 </Layout>
