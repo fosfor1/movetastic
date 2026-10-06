@@ -381,11 +381,11 @@ Switching `.dark` on is global. The other `bg-cosmic` views keep their literal c
 
 #### Automated
 
-- [x] 5.1 `npm run lint:ui` exits 0
-- [x] 5.2 Injected `text-blue-500` makes `npm run lint:ui` exit 1 with a `file:line` report (reverted)
-- [x] 5.3 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 5.1 `npm run lint:ui` exits 0 — 54b9a06
+- [x] 5.2 Injected `text-blue-500` makes `npm run lint:ui` exit 1 with a `file:line` report (reverted) — 54b9a06
+- [x] 5.3 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 54b9a06
 
 #### Manual
 
-- [x] 5.4 `AGENTS.md` `## UI` reads correctly and sits outside any 10x-cli managed block
-- [x] 5.5 Pre-commit hook runs `lint:ui` on an `.astro` commit
+- [x] 5.4 `AGENTS.md` `## UI` reads correctly and sits outside any 10x-cli managed block — 54b9a06
+- [x] 5.5 Pre-commit hook runs `lint:ui` on an `.astro` commit — 54b9a06

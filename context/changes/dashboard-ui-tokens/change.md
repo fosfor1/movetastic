@@ -1,7 +1,7 @@
 ---
 change_id: dashboard-ui-tokens
 title: Dashboard UI tokens
-status: implementing
+status: implemented
 created: 2026-10-06
 updated: 2026-10-06
 archived_at: null
