@@ -331,24 +331,24 @@ Switching `.dark` on is global. The other `bg-cosmic` views keep their literal c
 
 #### Automated
 
-- [x] 1.1 `src/components/ui/card.tsx` exists and exports `Card`, `CardHeader`, `CardTitle`, `CardContent`
-- [x] 1.2 `context/changes/dashboard-ui-tokens/theme-values.md` exists with the mapping table and a source line
-- [x] 1.3 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 1.1 `src/components/ui/card.tsx` exists and exports `Card`, `CardHeader`, `CardTitle`, `CardContent` — 054fa9f
+- [x] 1.2 `context/changes/dashboard-ui-tokens/theme-values.md` exists with the mapping table and a source line — 054fa9f
+- [x] 1.3 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 054fa9f
 
 #### Manual
 
-- [x] 1.4 `/dashboard` renders unchanged (no consumer of `card.tsx` yet)
+- [x] 1.4 `/dashboard` renders unchanged (no consumer of `card.tsx` yet) — 054fa9f
 
 ### Phase 2: Token values and theme layer
 
 #### Automated
 
-- [ ] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [ ] 2.2 Hex in `global.css` only inside `:root`/`.dark` value lines
+- [x] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 2.2 Hex in `global.css` only inside `:root`/`.dark` value lines
 
 #### Manual
 
-- [ ] 2.3 Screenshots of `/dashboard`, `/auth/signin`, `/dashboard/workouts/new` at desktop and 375 px look the same as before
+- [x] 2.3 Screenshots of `/dashboard`, `/auth/signin`, `/dashboard/workouts/new` at desktop and 375 px look the same as before
 
 ### Phase 3: Dashboard view on tokens and components
 
