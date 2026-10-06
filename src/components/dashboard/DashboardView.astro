@@ -1,0 +1,90 @@
+---
+import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import type { Workout } from "@/types";
+
+interface Props {
+  email: string | undefined;
+  weeklyLoad: number | null;
+  workouts: Workout[];
+  listError: string | null;
+}
+
+const { email, weeklyLoad, workouts, listError } = Astro.props;
+
+const loadFormatter = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 });
+
+const dateFormatter = new Intl.DateTimeFormat("pl-PL", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  timeZone: "UTC",
+});
+const distanceFormatter = new Intl.NumberFormat("pl-PL", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function formatDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  const formatted = dateFormatter.format(new Date(Date.UTC(year, month - 1, day)));
+  // Capitalize only the weekday; Polish month names stay lowercase.
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+}
+---
+
+<Card className="mx-auto w-full max-w-lg gap-0 rounded-2xl p-6 backdrop-blur-xl sm:p-8">
+  <h1 class="text-xl font-bold sm:text-2xl">Twoje treningi</h1>
+
+  <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+    <p class="text-muted-foreground min-w-0 truncate text-sm">
+      Zalogowano jako <span class="text-foreground font-semibold">{email}</span>
+    </p>
+    <form method="POST" action="/api/auth/signout">
+      <button type="submit" class:list={buttonVariants({ variant: "outline", size: "sm" })}>
+        Wyloguj
+      </button>
+    </form>
+  </div>
+
+  {weeklyLoad !== null && (
+    <div class="bg-muted mt-6 rounded-lg border px-4 py-3">
+      <p class="text-muted-foreground text-sm">Obciążenie z ostatnich 7 dni</p>
+      <p class="mt-1 text-3xl font-bold" data-testid="weekly-load">
+        {loadFormatter.format(weeklyLoad)}
+      </p>
+      <p class="text-muted-foreground/75 mt-1 text-xs">Suma z treningów: dystans (km) × średnie tętno ÷ 100</p>
+    </div>
+  )}
+
+  <a href="/dashboard/workouts/new" class:list={cn(buttonVariants(), "mt-6 w-full")}>
+    Dodaj trening
+  </a>
+
+  <h2 class="mt-8 mb-4 text-lg font-semibold sm:text-xl">Ostatnie 7 dni</h2>
+
+  {listError ? (
+    <p
+      role="alert"
+      class="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-3 py-2 text-sm"
+    >
+      {listError}
+    </p>
+  ) : workouts.length === 0 ? (
+    <div class="flex flex-wrap items-center gap-x-2">
+      <p class="text-muted-foreground/75 text-sm">Brak treningów z ostatnich 7 dni.</p>
+      <a href="/dashboard/workouts/new" class:list={buttonVariants({ variant: "link" })}>
+        Dodaj pierwszy trening
+      </a>
+    </div>
+  ) : (
+    <ul class="space-y-2">
+      {workouts.map((workout) => (
+        <li class="bg-muted rounded-lg border px-4 py-3">
+          <p class="font-medium">{formatDate(workout.workout_date)}</p>
+          <p class="text-muted-foreground mt-1 text-sm">
+            {distanceFormatter.format(workout.distance_km)} km · śr. tętno {workout.avg_heart_rate} ud/min
+          </p>
+        </li>
+      ))}
+    </ul>
+  )}
+</Card>
