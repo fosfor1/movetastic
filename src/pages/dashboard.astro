@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import DashboardView from "@/components/dashboard/DashboardView.astro";
 import { createClient } from "@/lib/supabase";
 import { todayInAppTimeZone } from "@/lib/dates";
 import { listRecentWorkouts } from "@/lib/workouts";
@@ -21,78 +22,8 @@ if (!supabase) {
 }
 
 const weeklyLoad = listError ? null : weeklyTrainingLoad(workouts);
-const loadFormatter = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 });
-
-const dateFormatter = new Intl.DateTimeFormat("pl-PL", {
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-  timeZone: "UTC",
-});
-const distanceFormatter = new Intl.NumberFormat("pl-PL", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-function formatDate(isoDate: string): string {
-  const [year, month, day] = isoDate.split("-").map(Number);
-  const formatted = dateFormatter.format(new Date(Date.UTC(year, month - 1, day)));
-  // Capitalize only the weekday; Polish month names stay lowercase.
-  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
-}
 ---
 
 <Layout title="Twoje treningi">
-  <div class="bg-cosmic min-h-screen p-4">
-    <div class="mx-auto w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-6 text-white backdrop-blur-xl sm:p-8">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <p class="min-w-0 truncate text-sm text-blue-100/80">
-          Zalogowano jako <span class="font-semibold text-white">{user?.email}</span>
-        </p>
-        <form method="POST" action="/api/auth/signout">
-          <button
-            type="submit"
-            class="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-sm transition-colors hover:bg-white/20"
-          >
-            Wyloguj
-          </button>
-        </form>
-      </div>
-
-      {weeklyLoad !== null && (
-        <div class="mt-6 rounded-lg border border-white/10 bg-white/5 px-4 py-3">
-          <p class="text-sm text-blue-100/80">Obciążenie z ostatnich 7 dni</p>
-          <p class="mt-1 text-3xl font-bold" data-testid="weekly-load">
-            {loadFormatter.format(weeklyLoad)}
-          </p>
-          <p class="mt-1 text-xs text-blue-100/60">Suma z treningów: dystans (km) × średnie tętno ÷ 100</p>
-        </div>
-      )}
-
-      <a
-        href="/dashboard/workouts/new"
-        class="mt-6 block w-full rounded-lg bg-purple-600 px-4 py-2 text-center font-medium text-white transition-colors hover:bg-purple-500"
-      >
-        Dodaj trening
-      </a>
-
-      <h1 class="mt-8 mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-xl font-bold text-transparent sm:text-2xl">
-        Twoje treningi z ostatnich 7 dni
-      </h1>
-
-      {listError ? (
-        <p class="rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">{listError}</p>
-      ) : workouts.length === 0 ? (
-        <p class="text-sm text-blue-100/60">Brak treningów z ostatnich 7 dni.</p>
-      ) : (
-        <ul class="space-y-2">
-          {workouts.map((workout) => (
-            <li class="rounded-lg border border-white/10 bg-white/5 px-4 py-3">
-              <p class="font-medium">{formatDate(workout.workout_date)}</p>
-              <p class="mt-1 text-sm text-blue-100/80">
-                {distanceFormatter.format(workout.distance_km)} km · śr. tętno {workout.avg_heart_rate} ud/min
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  </div>
+  <DashboardView email={user?.email} weeklyLoad={weeklyLoad} workouts={workouts} listError={listError} />
 </Layout>
