@@ -354,28 +354,28 @@ Switching `.dark` on is global. The other `bg-cosmic` views keep their literal c
 
 #### Automated
 
-- [x] 3.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [x] 3.2 Hardcoded-value scan on `dashboard.astro` + `DashboardView.astro` returns 0 lines (was 13)
-- [x] 3.3 `npm run smoke` passes against `npm run dev` with local Supabase
+- [x] 3.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 5867d89
+- [x] 3.2 Hardcoded-value scan on `dashboard.astro` + `DashboardView.astro` returns 0 lines (was 13) — 5867d89
+- [x] 3.3 `npm run smoke` passes against `npm run dev` with local Supabase — 5867d89
 
 #### Manual
 
-- [x] 3.4 `/dashboard` at desktop and 375 px: same hierarchy, CTA in primary, `h1` is the first heading
+- [x] 3.4 `/dashboard` at desktop and 375 px: same hierarchy, CTA in primary, `h1` is the first heading — 5867d89
 
 ### Phase 4: States and visual gate
 
 #### Automated
 
-- [ ] 4.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [ ] 4.2 Hardcoded-value scan on the view files plus kitchen sink returns 0 lines
-- [ ] 4.3 `npm run smoke` passes (empty-state string still asserted)
-- [ ] 4.4 `/dev/kitchen-sink/dashboard` returns 404 on `npm run preview`
+- [x] 4.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 4.2 Hardcoded-value scan on the view files plus kitchen sink returns 0 lines
+- [x] 4.3 `npm run smoke` passes (empty-state string still asserted)
+- [x] 4.4 `/dev/kitchen-sink/dashboard` returns 404 on `npm run preview`
 
 #### Manual
 
-- [ ] 4.5 Kitchen sink shows every matrix row (or N/A note) at desktop and 375 px; screenshots saved
-- [ ] 4.6 Focus ring visible on sign-out, CTA and empty-state link, readable on the gradient
-- [ ] 4.7 Error block exposed with role `alert`
+- [x] 4.5 Kitchen sink shows every matrix row (or N/A note) at desktop and 375 px; screenshots saved
+- [x] 4.6 Focus ring visible on sign-out, CTA and empty-state link, readable on the gradient
+- [x] 4.7 Error block exposed with role `alert`
 
 ### Phase 5: Guard
 

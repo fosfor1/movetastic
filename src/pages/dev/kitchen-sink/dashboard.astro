@@ -1,0 +1,130 @@
+---
+// Visual gate for DashboardView: every applicable state side by side, from fixtures. Dev only.
+import Layout from "@/layouts/Layout.astro";
+import DashboardView from "@/components/dashboard/DashboardView.astro";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { weeklyTrainingLoad } from "@/lib/training-load";
+import type { Workout } from "@/types";
+
+// Dev only: production answers 404 with an empty body. (A top-level `return` in frontmatter crashes
+// @typescript-eslint/no-misused-promises, so the status is set and the markup is gated instead.)
+const enabled = import.meta.env.DEV;
+if (!enabled) {
+  Astro.response.status = 404;
+}
+
+const email = "biegacz@example.com";
+
+const workouts: Workout[] = [
+  {
+    id: "fixture-1",
+    workout_date: "2026-10-05",
+    distance_km: 10.5,
+    avg_heart_rate: 152,
+    created_at: "2026-10-05T18:00:00Z",
+  },
+  {
+    id: "fixture-2",
+    workout_date: "2026-10-03",
+    distance_km: 6.25,
+    avg_heart_rate: 141,
+    created_at: "2026-10-03T07:30:00Z",
+  },
+  {
+    id: "fixture-3",
+    workout_date: "2026-09-30",
+    distance_km: 21.1,
+    avg_heart_rate: 160,
+    created_at: "2026-09-30T09:15:00Z",
+  },
+];
+
+const states = [
+  { label: "default", props: { email, weeklyLoad: weeklyTrainingLoad(workouts), workouts, listError: null } },
+  { label: "empty", props: { email, weeklyLoad: 0, workouts: [], listError: null } },
+  {
+    label: "error",
+    props: {
+      email,
+      weeklyLoad: null,
+      workouts: [],
+      listError: "Nie można wczytać treningów: Supabase nie jest skonfigurowany.",
+    },
+  },
+];
+
+// Forced hover: the variant's own hover tokens applied as plain classes.
+const signOutClass = buttonVariants({ variant: "outline", size: "sm" });
+const signOutHoverClass = cn(signOutClass, "bg-accent text-accent-foreground dark:bg-input/50");
+const ctaClass = buttonVariants();
+const ctaHoverClass = cn(ctaClass, "bg-primary/90");
+---
+
+{enabled && (
+  <Layout title="Kitchen sink: dashboard">
+    <div class="bg-cosmic min-h-screen space-y-8 p-4">
+      <h1 class="text-2xl font-bold">Kitchen sink: DashboardView</h1>
+
+      <div class="grid gap-6 xl:grid-cols-3">
+        {states.map((state) => (
+          <section class="space-y-3">
+            <h2 class="text-muted-foreground text-sm font-semibold tracking-wide uppercase">{state.label}</h2>
+            <DashboardView {...state.props} />
+          </section>
+        ))}
+      </div>
+
+      <section class="space-y-3">
+        <h2 class="text-muted-foreground text-sm font-semibold tracking-wide uppercase">Controls: hover / disabled</h2>
+        <div class="bg-card text-card-foreground grid gap-4 rounded-xl border p-4 sm:grid-cols-3">
+          <div class="space-y-2">
+            <p class="text-muted-foreground text-xs">rest</p>
+            <div class="flex flex-wrap items-center gap-3">
+              <button type="button" class:list={signOutClass}>
+                Wyloguj
+              </button>
+              <button type="button" class:list={ctaClass}>
+                Dodaj trening
+              </button>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <p class="text-muted-foreground text-xs">hover (forced)</p>
+            <div class="flex flex-wrap items-center gap-3">
+              <button type="button" class:list={signOutHoverClass}>
+                Wyloguj
+              </button>
+              <button type="button" class:list={ctaHoverClass}>
+                Dodaj trening
+              </button>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <p class="text-muted-foreground text-xs">disabled</p>
+            <div class="flex flex-wrap items-center gap-3">
+              <button type="button" disabled class:list={signOutClass}>
+                Wyloguj
+              </button>
+              <button type="button" disabled class:list={ctaClass}>
+                Dodaj trening
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-2">
+        <h2 class="text-muted-foreground text-sm font-semibold tracking-wide uppercase">Not applicable</h2>
+        <ul class="text-muted-foreground list-disc space-y-1 pl-5 text-sm">
+          <li>
+            disabled (in the live view): no control has a disabled condition. Sign-out is a plain SSR form and there is
+            no pending state; the strip above shows the disabled look only.
+          </li>
+          <li>loading: data arrives during SSR (dashboard.astro), there is no client fetch to wait on.</li>
+          <li>focus-visible: checked live with Tab on the fixtures above (CTA, sign-out, empty-state link).</li>
+        </ul>
+      </section>
+    </div>
+  </Layout>
+)}
