@@ -366,26 +366,26 @@ Switching `.dark` on is global. The other `bg-cosmic` views keep their literal c
 
 #### Automated
 
-- [x] 4.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [x] 4.2 Hardcoded-value scan on the view files plus kitchen sink returns 0 lines
-- [x] 4.3 `npm run smoke` passes (empty-state string still asserted)
-- [x] 4.4 `/dev/kitchen-sink/dashboard` returns 404 on `npm run preview`
+- [x] 4.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 34a5f5e
+- [x] 4.2 Hardcoded-value scan on the view files plus kitchen sink returns 0 lines — 34a5f5e
+- [x] 4.3 `npm run smoke` passes (empty-state string still asserted) — 34a5f5e
+- [x] 4.4 `/dev/kitchen-sink/dashboard` returns 404 on `npm run preview` — 34a5f5e
 
 #### Manual
 
-- [x] 4.5 Kitchen sink shows every matrix row (or N/A note) at desktop and 375 px; screenshots saved
-- [x] 4.6 Focus ring visible on sign-out, CTA and empty-state link, readable on the gradient
-- [x] 4.7 Error block exposed with role `alert`
+- [x] 4.5 Kitchen sink shows every matrix row (or N/A note) at desktop and 375 px; screenshots saved — 34a5f5e
+- [x] 4.6 Focus ring visible on sign-out, CTA and empty-state link, readable on the gradient — 34a5f5e
+- [x] 4.7 Error block exposed with role `alert` — 34a5f5e
 
 ### Phase 5: Guard
 
 #### Automated
 
-- [ ] 5.1 `npm run lint:ui` exits 0
-- [ ] 5.2 Injected `text-blue-500` makes `npm run lint:ui` exit 1 with a `file:line` report (reverted)
-- [ ] 5.3 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 5.1 `npm run lint:ui` exits 0
+- [x] 5.2 Injected `text-blue-500` makes `npm run lint:ui` exit 1 with a `file:line` report (reverted)
+- [x] 5.3 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
 
 #### Manual
 
-- [ ] 5.4 `AGENTS.md` `## UI` reads correctly and sits outside any 10x-cli managed block
-- [ ] 5.5 Pre-commit hook runs `lint:ui` on an `.astro` commit
+- [x] 5.4 `AGENTS.md` `## UI` reads correctly and sits outside any 10x-cli managed block
+- [x] 5.5 Pre-commit hook runs `lint:ui` on an `.astro` commit
