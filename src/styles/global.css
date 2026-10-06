@@ -39,7 +39,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-/* Cosmic palette; values and their source literals: context/changes/dashboard-ui-tokens/theme-values.md */
+/* Cosmic palette; values and their source literals: context/archive/2026-10-06-dashboard-ui-tokens/theme-values.md */
 .dark {
   --background: #0a0e1a;
   --background-glow: #0f1529;
