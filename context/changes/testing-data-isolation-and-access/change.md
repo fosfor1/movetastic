@@ -1,7 +1,7 @@
 ---
 change_id: testing-data-isolation-and-access
 title: Testing data isolation and access
-status: implementing
+status: implemented
 created: 2026-10-11
 updated: 2026-10-11
 archived_at: null
