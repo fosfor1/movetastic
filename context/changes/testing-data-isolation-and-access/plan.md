@@ -309,26 +309,26 @@ Brak zmian schematu. Konta `it-*@example.com` gromadzą się w lokalnej bazie; c
 
 #### Automated
 
-- [x] 1.1 Zależności instalują się: `npm install` bez błędów, `vitest` i `postgres` w devDependencies
-- [x] 1.2 Testy izolacji przechodzą przy działającym Supabase i serwerze: `npm run test:integration -- tests/integration/rls-workouts.test.ts`
-- [x] 1.3 Bramka CI przechodzi: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 1.1 Zależności instalują się: `npm install` bez błędów, `vitest` i `postgres` w devDependencies — 6296d5e
+- [x] 1.2 Testy izolacji przechodzą przy działającym Supabase i serwerze: `npm run test:integration -- tests/integration/rls-workouts.test.ts` — 6296d5e
+- [x] 1.3 Bramka CI przechodzi: `npx astro sync && npm run lint && npx astro check && npm run build` — 6296d5e
 
 #### Manual
 
-- [x] 1.4 Przy zatrzymanym Supabase `npm run test:integration` kończy się błędem setupu z instrukcją
-- [x] 1.5 Test mutacyjny: polityka select `using (true)` → test czerwony; po `db reset` → zielony
+- [x] 1.4 Przy zatrzymanym Supabase `npm run test:integration` kończy się błędem setupu z instrukcją — 6296d5e
+- [x] 1.5 Test mutacyjny: polityka select `using (true)` → test czerwony; po `db reset` → zielony — 6296d5e
 
 ### Phase 2: Strażnik katalogowy RLS (#2)
 
 #### Automated
 
-- [ ] 2.1 Test strażnika przechodzi: `npm run test:integration -- tests/integration/rls-catalog-guard.test.ts`
-- [ ] 2.2 Po uruchomieniu w bazie nie ma tabel `__rls_guard_probe*`
-- [ ] 2.3 Bramka CI przechodzi: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 2.1 Test strażnika przechodzi: `npm run test:integration -- tests/integration/rls-catalog-guard.test.ts`
+- [x] 2.2 Po uruchomieniu w bazie nie ma tabel `__rls_guard_probe*`
+- [x] 2.3 Bramka CI przechodzi: `npx astro sync && npm run lint && npx astro check && npm run build`
 
 #### Manual
 
-- [ ] 2.4 Test mutacyjny: migracja robocza z tabelą bez RLS → test czerwony z nazwą tabeli i regułą `rls-disabled`; po usunięciu → zielony
+- [x] 2.4 Test mutacyjny: migracja robocza z tabelą bez RLS → test czerwony z nazwą tabeli i regułą `rls-disabled`; po usunięciu → zielony
 
 ### Phase 3: Anonimowy dostęp do tras (#4)
 
