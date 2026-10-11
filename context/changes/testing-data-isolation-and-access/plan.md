@@ -334,22 +334,22 @@ Brak zmian schematu. Konta `it-*@example.com` gromadzą się w lokalnej bazie; c
 
 #### Automated
 
-- [x] 3.1 Test anonimowego dostępu przechodzi: `npm run test:integration -- tests/integration/anonymous-access.test.ts`
-- [x] 3.2 Cały projekt przechodzi: `npm run test:integration`
-- [x] 3.3 Bramka CI przechodzi: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 3.1 Test anonimowego dostępu przechodzi: `npm run test:integration -- tests/integration/anonymous-access.test.ts` — a37afc2
+- [x] 3.2 Cały projekt przechodzi: `npm run test:integration` — a37afc2
+- [x] 3.3 Bramka CI przechodzi: `npx astro sync && npm run lint && npx astro check && npm run build` — a37afc2
 
 #### Manual
 
-- [x] 3.4 Test mutacyjny: `src/pages/api/probe.ts` bez sprawdzenia sesji → test czerwony z `/api/probe GET`; po usunięciu → zielony
-- [x] 3.5 `npm run smoke` nadal przechodzi
+- [x] 3.4 Test mutacyjny: `src/pages/api/probe.ts` bez sprawdzenia sesji → test czerwony z `/api/probe GET`; po usunięciu → zielony — a37afc2
+- [x] 3.5 `npm run smoke` nadal przechodzi — a37afc2
 
 ### Phase 4: Cookbook i dokumentacja
 
 #### Automated
 
-- [ ] 4.1 W `test-plan.md` §6.1–6.3 nie ma już „TBD — see §3 Phase 1”
-- [ ] 4.2 Formatowanie przechodzi: `npx prettier --check context/foundation/test-plan.md AGENTS.md`
+- [x] 4.1 W `test-plan.md` §6.1–6.3 nie ma już „TBD — see §3 Phase 1”
+- [x] 4.2 Formatowanie przechodzi: `npx prettier --check context/foundation/test-plan.md AGENTS.md`
 
 #### Manual
 
-- [ ] 4.3 Wpisy §6.1–6.3 pozwalają dodać nowy test bez czytania tego planu
+- [x] 4.3 Wpisy §6.1–6.3 pozwalają dodać nowy test bez czytania tego planu
