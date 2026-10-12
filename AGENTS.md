@@ -23,6 +23,7 @@ Movetastic is a web app that suggests a runner's workout for today based on rece
 - `npm run dev` — dev server on the workerd runtime (secrets from `.dev.vars`).
 - `npx astro sync && npm run lint && npx astro check && npm run build` — the CI gate; run before pushing.
 - `npm run smoke` — auth-flow HTTP check against a running server (`BASE_URL`); needs Supabase with email confirmation off.
+- `npm run test:integration` — Vitest integration tests (RLS isolation, RLS catalog guard, anonymous access); needs `npx supabase start` and a running server at `BASE_URL` (default `http://localhost:4321`).
 
 ## Style
 
@@ -37,7 +38,7 @@ Formatting and lint (`@.prettierrc.json`, `@eslint.config.js`) run via husky/lin
 
 ## Testing
 
-No unit test suite exists yet; `scripts/smoke.mjs` is the only automated check. Verify every change with the CI gate from Commands, and additionally run `npm run smoke` after changes to `src/middleware.ts`, `src/lib/supabase.ts`, or anything under `src/pages/api/auth/` or `src/pages/auth/`.
+Integration tests live in `tests/integration/` (`npm run test:integration`; not yet in CI); `scripts/smoke.mjs` is the HTTP smoke check. How to add a test: `context/foundation/test-plan.md` §6. Run `npm run test:integration` after changes to `supabase/migrations/`, `src/middleware.ts`, or anything under `src/pages/`. Verify every change with the CI gate from Commands, and additionally run `npm run smoke` after changes to `src/middleware.ts`, `src/lib/supabase.ts`, or anything under `src/pages/api/auth/` or `src/pages/auth/`.
 
 ## CI & Commits
 
