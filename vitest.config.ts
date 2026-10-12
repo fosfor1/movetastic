@@ -17,6 +17,15 @@ export default defineConfig({
           fileParallelism: false,
         },
       },
+      {
+        // Proof for the Claude Code hooks in .claude/hooks/; runs the scripts in throwaway git repos.
+        test: {
+          name: "hooks",
+          environment: "node",
+          include: ["tests/hooks/**/*.test.ts"],
+          testTimeout: 30_000,
+        },
+      },
     ],
   },
 });
