@@ -247,25 +247,25 @@ Zmiana dokumentacyjna — brak testów kodu. Weryfikacja: `prettier --check`, ko
 
 #### Automated
 
-- [x] 1.1 Formatowanie: `npx prettier --check context/foundation/test-plan.md`
-- [x] 1.2 Brak nieaktualnych fraz (grep nic nie zwraca)
-- [x] 1.3 Nowe daty: `checked: 2026-10-13` ≥ 2
+- [x] 1.1 Formatowanie: `npx prettier --check context/foundation/test-plan.md` — b748e6c
+- [x] 1.2 Brak nieaktualnych fraz (grep nic nie zwraca) — b748e6c
+- [x] 1.3 Nowe daty: `checked: 2026-10-13` ≥ 2 — b748e6c
 
 #### Manual
 
-- [x] 1.4 §4 i §5 zgadzają się z research.md
+- [x] 1.4 §4 i §5 zgadzają się z research.md — b748e6c
 
 ### Phase 2: §2 Risk Map — zatwierdzone pozycje
 
 #### Automated
 
-- [ ] 2.1 Formatowanie: `npx prettier --check context/foundation/test-plan.md`
-- [ ] 2.2 Response Guidance ma wiersze #1–#8; Risk Map ma wiersze 7 i 8
-- [ ] 2.3 `git diff` §2 dotyka tylko wierszy #6, #7, #8
+- [x] 2.1 Formatowanie: `npx prettier --check context/foundation/test-plan.md`
+- [x] 2.2 Response Guidance ma wiersze #1–#8; Risk Map ma wiersze 7 i 8
+- [x] 2.3 `git diff` §2 dotyka tylko wierszy #6, #7, #8
 
 #### Manual
 
-- [ ] 2.4 Użytkownik potwierdza brzmienie #6, #7, #8
+- [x] 2.4 Użytkownik potwierdza brzmienie #6, #7, #8
 
 ### Phase 3: §3 kolejność, §6 cookbook, §7
 
