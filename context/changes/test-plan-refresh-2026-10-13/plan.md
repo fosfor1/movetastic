@@ -271,12 +271,12 @@ Zmiana dokumentacyjna — brak testów kodu. Weryfikacja: `prettier --check`, ko
 
 #### Automated
 
-- [x] 3.1 Formatowanie: `npx prettier --check context/foundation/test-plan.md`
-- [x] 3.2 Brak martwego folderu `testing-load-and-validation-rules`
-- [x] 3.3 Brak starego odwołania „Phase 4” poza regułą sugestii
-- [x] 3.4 Wzorzec E2E obecny w §6
+- [x] 3.1 Formatowanie: `npx prettier --check context/foundation/test-plan.md` — f46dee1
+- [x] 3.2 Brak martwego folderu `testing-load-and-validation-rules` — f46dee1
+- [x] 3.3 Brak starego odwołania „Phase 4” poza regułą sugestii — f46dee1
+- [x] 3.4 Wzorzec E2E obecny w §6 — f46dee1
 
 #### Manual
 
-- [x] 3.5 `/10x-test-plan --status` wskazuje Fazę 2 jako następną
-- [x] 3.6 §6 E2E wykonalny bez czytania specu
+- [x] 3.5 `/10x-test-plan --status` wskazuje Fazę 2 jako następną — f46dee1
+- [x] 3.6 §6 E2E wykonalny bez czytania specu — f46dee1

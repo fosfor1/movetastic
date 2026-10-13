@@ -1,7 +1,7 @@
 ---
 change_id: test-plan-refresh-2026-10-13
 title: Refresh the test plan after E2E setup, hooks and the sparse-profile interview
-status: implementing
+status: implemented
 created: 2026-10-13
 updated: 2026-10-13
 archived_at: null
