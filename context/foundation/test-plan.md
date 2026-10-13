@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-10-11
+> Last updated: 2026-10-13
 
 ## 1. Strategy
 
@@ -73,32 +73,33 @@ Status vocabulary: `not started` → `change opened` → `researched` → `plann
 
 ## 4. Stack
 
-Klasyczna baza testów projektu. Profil bazy testów: **none** — brak konfiguracji runnera i testów aplikacji; jedynym automatem jest smoke HTTP (`npm run smoke`) w CI na lokalnym Supabase.
+Klasyczna baza testów projektu. Profil bazy testów: **sparse** — Vitest (projekt `integration`: 3 pliki, projekt `hooks`: 1 plik) i Playwright (projekt `setup` + seed `auth-gate-roundtrip` + `workout-log-roundtrip`); brak testów logiki domenowej. Nic z tego nie biegnie w CI — jedynym automatem w CI jest smoke HTTP (`npm run smoke`) na lokalnym Supabase.
 
-| Layer                | Tool                                                                                                                  | Version                      | Notes                                                                                                                                                                                       |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| unit + integration   | Vitest (projekty w `vitest.config.ts`; dziś `integration`) + `postgres` (sterownik do katalogu) — checked: 2026-10-11 | vitest 5.0.3, postgres 3.4.9 | testy integracyjne nie importują kodu aplikacji (bez `astro:env`/workerd); projekt `unit` dojdzie w Fazie 2                                                                                 |
-| DB / RLS integration | lokalny Supabase (CLI, już w CI smoke)                                                                                | supabase CLI ^2.23           | prawdziwa baza z migracjami; bez mockowania klienta                                                                                                                                         |
-| HTTP / smoke         | `scripts/smoke.mjs` (istniejący)                                                                                      | —                            | sprawdza auth, izolację na HTML, walidację; rozszerzalny o nowe trasy                                                                                                                       |
-| e2e                  | none — świadomie                                                                                                      | —                            | ryzyka pokrywa tańsza warstwa; ponownie rozważ, gdy pojawi się interakcja wielokrokowa po stronie klienta                                                                                   |
-| (optional) AI-native | claude-in-chrome — checked: 2026-10-11                                                                                | n/a                          | wizualny przegląd dashboardu/ekranu sugestii po zmianach UI. When NOT to use: do weryfikacji liczb, izolacji czy reguł — tam deterministyczny test daje pełny sygnał; nie zamiast `lint:ui` |
+| Layer                | Tool                                                                                                                            | Version                      | Notes                                                                                                                                                                                                                                                                        |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| unit + integration   | Vitest (projekty w `vitest.config.ts`; dziś `integration` i `hooks`) + `postgres` (sterownik do katalogu) — checked: 2026-10-13 | vitest 5.0.3, postgres 3.4.9 | testy integracyjne nie importują kodu aplikacji (bez `astro:env`/workerd); projekt `unit` dojdzie w Fazie 3                                                                                                                                                                  |
+| DB / RLS integration | lokalny Supabase (CLI, już w CI smoke)                                                                                          | supabase CLI ^2.23           | prawdziwa baza z migracjami; bez mockowania klienta                                                                                                                                                                                                                          |
+| HTTP / smoke         | `scripts/smoke.mjs` (istniejący)                                                                                                | —                            | sprawdza auth, izolację na HTML, walidację; rozszerzalny o nowe trasy                                                                                                                                                                                                        |
+| e2e                  | Playwright (`@playwright/test`) — checked: 2026-10-13                                                                           | 1.64.0                       | projekt `setup` (logowanie) + `storageState` dla `chromium`; szczegóły (port, komenda serwera, użytkownik E2E, seed) w `context/foundation/test-stack.md` `## E2E` — tam źródło prawdy; ryzyka #7, #8; w CI od Fazy 2                                                        |
+| (optional) AI-native | `playwright-cli` (eksploracja działającej aplikacji przy pisaniu E2E) + claude-in-chrome — checked: 2026-10-13                  | playwright-cli 0.1.22        | `playwright-cli` do eksploracji przed generowaniem testu E2E; claude-in-chrome — wizualny przegląd dashboardu/ekranu sugestii po zmianach UI. When NOT to use: do weryfikacji liczb, izolacji czy reguł — tam deterministyczny test daje pełny sygnał; nie zamiast `lint:ui` |
 
 **Stack grounding tools (current session):**
 
-- Docs: Context7 — not available in current session; Cloudflare MCP docs dostępny (workerd/Workers) — not used at plan time, do użycia w research Fazy 1; checked: 2026-10-11
-- Search: Exa.ai — not available in current session; WebSearch/WebFetch dostępne — not used at plan time; checked: 2026-10-11
-- Runtime/browser: claude-in-chrome — możliwy opcjonalny przegląd wizualny, not used; Playwright MCP not available; checked: 2026-10-11
-- Provider/platform: Cloudflare MCP dostępny (logi Workers dla pre-prod smoke); Supabase i GitHub MCP not available (jest `gh` CLI); checked: 2026-10-11
+- Docs: Context7 — not available in current session; Cloudflare MCP docs dostępny (workerd/Workers) — not used at plan time; checked: 2026-10-13
+- Search: Exa.ai — not available in current session; WebSearch/WebFetch dostępne — not used at plan time; checked: 2026-10-13
+- Runtime/browser: `playwright-cli` 0.1.22 dostępne (eksploracja przy E2E); claude-in-chrome dostępny — opcjonalny przegląd wizualny, not used; Playwright MCP not available; checked: 2026-10-13
+- Provider/platform: Cloudflare MCP dostępny (logi Workers dla pre-prod smoke); Supabase i GitHub MCP not available (jest `gh` CLI); checked: 2026-10-13
 
 ## 5. Quality Gates
 
-| Gate                                                | Where                 | Required?                                             | Catches                                                 |
-| --------------------------------------------------- | --------------------- | ----------------------------------------------------- | ------------------------------------------------------- |
-| lint + lint:ui + typecheck (`astro check`) + build  | local + CI (`ci` job) | required (wired)                                      | dryf składni/typów, literały UI                         |
-| smoke HTTP (auth, izolacja HTML, walidacja)         | CI (`smoke` job)      | required (wired)                                      | zepsute ścieżki auth i podstawowa izolacja              |
-| unit + integration (w tym RLS na lokalnym Supabase) | local + CI            | required after §3 Phase 4 (testy lądują w Fazach 1–3) | wycieki między użytkownikami, regresje reguł domenowych |
-| post-edit hook                                      | local (agent loop)    | recommended after §3 Phase 4                          | regresje w momencie edycji                              |
-| pre-prod smoke na produkcji                         | po ręcznym deployu    | optional (manual)                                     | błędy środowiskowe (migracja vs Worker)                 |
+| Gate                                                 | Where                 | Required?                                                                                | Catches                                                                |
+| ---------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| lint + lint:ui + typecheck (`astro check`) + build   | local + CI (`ci` job) | required (wired)                                                                         | dryf składni/typów, literały UI                                        |
+| smoke HTTP (auth, izolacja HTML, walidacja)          | CI (`smoke` job)      | required (wired)                                                                         | zepsute ścieżki auth i podstawowa izolacja                             |
+| unit + integration (w tym RLS na lokalnym Supabase)  | local + CI            | required after §3 Phase 2 (CI uruchamia `npm run test:integration`, nie `npm test`)      | wycieki między użytkownikami, regresje reguł domenowych                |
+| E2E Playwright (`npx playwright test`, zimny serwer) | local + CI            | required after §3 Phase 2                                                                | zepsute przepływy w przeglądarce, bieg na nieświeżym buildzie (#7, #8) |
+| post-edit hook                                       | local (agent loop)    | required (wired) — `PostToolUse` lint edytowanego pliku + `Stop` end-of-turn (`c3c172c`) | regresje w momencie edycji                                             |
+| pre-prod smoke na produkcji                          | po ręcznym deployu    | optional (manual)                                                                        | błędy środowiskowe (migracja vs Worker)                                |
 
 ## 6. Cookbook Patterns
 
@@ -159,9 +160,10 @@ wydaniu odpowiedniej fazy; wcześniej brzmi „TBD — see §3 Phase <N>.”
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-10-11
-- Stack versions last verified: 2026-10-11
-- AI-native tool references last verified: 2026-10-11
+- Strategy (§1–§5) last reviewed: 2026-10-13
+- Stack versions last verified: 2026-10-13
+- AI-native tool references last verified: 2026-10-13
+- Hot-spot scan 2026-10-13 (zakres `src/`, `scripts/`, `supabase/migrations/`, `tests/`; 30 dni): 12 commitów w `src/`, `scripts/`, `supabase/migrations/`; top katalogi (zmiany plików) `src/components/auth` (7), `src/pages/api` (5), `src/pages/auth` (3); top pliki `src/pages/dashboard.astro` (5), `scripts/smoke.mjs` (4); `tests/` — 4 commity, same nowe pliki, bez churnu; brak churnu kodu od 2026-10-11.
 
 Refresh (`/10x-test-plan --refresh`) when:
 
