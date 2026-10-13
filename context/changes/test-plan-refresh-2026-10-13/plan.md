@@ -259,24 +259,24 @@ Zmiana dokumentacyjna — brak testów kodu. Weryfikacja: `prettier --check`, ko
 
 #### Automated
 
-- [x] 2.1 Formatowanie: `npx prettier --check context/foundation/test-plan.md`
-- [x] 2.2 Response Guidance ma wiersze #1–#8; Risk Map ma wiersze 7 i 8
-- [x] 2.3 `git diff` §2 dotyka tylko wierszy #6, #7, #8
+- [x] 2.1 Formatowanie: `npx prettier --check context/foundation/test-plan.md` — 187be6b
+- [x] 2.2 Response Guidance ma wiersze #1–#8; Risk Map ma wiersze 7 i 8 — 187be6b
+- [x] 2.3 `git diff` §2 dotyka tylko wierszy #6, #7, #8 — 187be6b
 
 #### Manual
 
-- [x] 2.4 Użytkownik potwierdza brzmienie #6, #7, #8
+- [x] 2.4 Użytkownik potwierdza brzmienie #6, #7, #8 — 187be6b
 
 ### Phase 3: §3 kolejność, §6 cookbook, §7
 
 #### Automated
 
-- [ ] 3.1 Formatowanie: `npx prettier --check context/foundation/test-plan.md`
-- [ ] 3.2 Brak martwego folderu `testing-load-and-validation-rules`
-- [ ] 3.3 Brak starego odwołania „Phase 4” poza regułą sugestii
-- [ ] 3.4 Wzorzec E2E obecny w §6
+- [x] 3.1 Formatowanie: `npx prettier --check context/foundation/test-plan.md`
+- [x] 3.2 Brak martwego folderu `testing-load-and-validation-rules`
+- [x] 3.3 Brak starego odwołania „Phase 4” poza regułą sugestii
+- [x] 3.4 Wzorzec E2E obecny w §6
 
 #### Manual
 
-- [ ] 3.5 `/10x-test-plan --status` wskazuje Fazę 2 jako następną
-- [ ] 3.6 §6 E2E wykonalny bez czytania specu
+- [x] 3.5 `/10x-test-plan --status` wskazuje Fazę 2 jako następną
+- [x] 3.6 §6 E2E wykonalny bez czytania specu

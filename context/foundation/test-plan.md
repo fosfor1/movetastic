@@ -66,12 +66,13 @@ Każdy wiersz to odrębna faza wdrożenia, która otwiera własny folder zmiany
 przez `/10x-new`. Status przesuwa się w prawo wg poniższego słownika;
 orkiestrator aktualizuje go w miarę pojawiania się artefaktów.
 
-| #   | Phase name                             | Goal (one line)                                                                                                                            | Risks covered | Test types                            | Status        | Change folder                                      |
-| --- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------- | ------------------------------------- | ------------- | -------------------------------------------------- |
-| 1   | Izolacja danych i dostęp               | Udowodnić, że B nie czyta ani nie modyfikuje danych A, że nowa tabela bez RLS wywraca test i że anonim nie dostaje danych; postawić runner | #1, #2, #4    | integration (lokalny Supabase + HTTP) | complete      | context/changes/testing-data-isolation-and-access/ |
-| 2   | Reguły domenowe obciążenia i walidacji | Udowodnić poprawne okno 7 dni wg Warszawy, wzór na niezależnych przykładach i serwerowe odrzucanie nierealnych danych                      | #5, #6        | unit + 1 integration                  | change opened | context/changes/testing-load-and-validation-rules/ |
-| 3   | Bezpieczeństwo reguły sugestii         | Udowodnić, że niskie samopoczucie nigdy nie daje treningu intensywnego (wymaga wydanego S-03)                                              | #3            | unit (tabela przypadków granicznych)  | not started   | —                                                  |
-| 4   | Bramki jakości                         | Testy jako wymagana bramka CI; lokalny hook po edycji dla pętli agenta                                                                     | cross-cutting | gates + post-edit hook                | not started   | —                                                  |
+| #   | Phase name                             | Goal (one line)                                                                                                                                                               | Risks covered     | Test types                            | Status      | Change folder                                          |
+| --- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | ------------------------------------- | ----------- | ------------------------------------------------------ |
+| 1   | Izolacja danych i dostęp               | Udowodnić, że B nie czyta ani nie modyfikuje danych A, że nowa tabela bez RLS wywraca test i że anonim nie dostaje danych; postawić runner                                    | #1, #2, #4        | integration (lokalny Supabase + HTTP) | complete    | context/changes/testing-data-isolation-and-access/     |
+| 2   | Bramka CI i zimny serwer               | Integracja i E2E jako wymagane joby CI na lokalnym Supabase (`test:integration`, nie `npm test`), użytkownik E2E tworzony w jobie; bieg nie przechodzi na nieświeżym buildzie | #7, cross-cutting | gates (CI jobs) + deliberate-break    | not started | —                                                      |
+| 3   | Reguły domenowe obciążenia i walidacji | Udowodnić poprawne okno 7 dni wg Warszawy, wzór na niezależnych przykładach i serwerowe odrzucanie nierealnych danych                                                         | #5, #6            | unit + 1 integration                  | not started | —                                                      |
+| 4   | Bezpieczeństwo reguły sugestii         | Udowodnić, że niskie samopoczucie nigdy nie daje treningu intensywnego (wymaga wydanego S-03)                                                                                 | #3                | unit (tabela przypadków granicznych)  | not started | —                                                      |
+| 5   | Przepływ zapisu treningu (E2E)         | Udowodnić, że trening zapisany przez formularz w przeglądarce trafia na listę „Ostatnie 7 dni” i przeżywa reload                                                              | #8                | e2e (Playwright)                      | complete    | — (`tests/e2e/workout-log-roundtrip.spec.ts`, 04dba68) |
 
 Status vocabulary: `not started` → `change opened` → `researched` → `planned` → `implementing` → `complete`.
 
@@ -145,22 +146,35 @@ wydaniu odpowiedniej fazy; wcześniej brzmi „TBD — see §3 Phase <N>.”
 
 ### 6.4 Adding a unit test for a domain rule (load window, validation)
 
-- TBD — see §3 Phase 2 for time-zone boundary / independent-oracle pattern.
+- TBD — see §3 Phase 3 for time-zone boundary / independent-oracle pattern.
 
 ### 6.5 Adding a test for the suggestion rule
 
-- TBD — see §3 Phase 3 for low-wellbeing-never-intense boundary table pattern.
+- TBD — see §3 Phase 4 for low-wellbeing-never-intense boundary table pattern.
 
-### 6.6 Per-rollout-phase notes
+### 6.6 Adding an E2E test (browser flow)
+
+- Kiedy: tylko ryzyko, które wymaga przeglądarki (hydratacja wyspy React, przekierowania, stan po reloadzie). Reguły domenowe i izolacja zostają w unit/integracji (§1 zasada #1).
+- Test referencyjny: `tests/e2e/workout-log-roundtrip.spec.ts` (ryzyko #8); seed `tests/e2e/seed.spec.ts` (auth-gate-roundtrip) — wzorzec, który kopiuje każdy nowy spec. Nagłówek specu: komentarz `risk:` i `seed:`.
+- Uruchomienie: `npx playwright test` (wszystko), `npx playwright test tests/e2e/<name>.spec.ts` (jeden plik). Konfiguracja, port i komenda serwera: `context/foundation/test-stack.md` `## E2E` (źródło prawdy). Wymaga `npx supabase start` i lokalnego użytkownika z `E2E_USERNAME`/`E2E_PASSWORD` w `.env` (po `supabase db reset` utwórz go ponownie).
+- Autoryzacja: projekt `setup` (`tests/e2e/auth.setup.ts`) loguje się raz przez formularz i zapisuje `playwright/.auth/user.json`; specy dostają sesję przez `storageState`. Ścieżka niezalogowana: `test.use({ storageState: { cookies: [], origins: [] } })` jak w seedzie.
+- Zimny serwer (#7): poza CI Playwright reużywa każdego procesu, który odpowiada na `baseURL`, i wtedy nie buduje aplikacji. Przed biegiem upewnij się, że nic nie słucha na porcie (`npx astro preview stop`, `.astro/preview.json` / `.astro/dev.json` wskazują daemony w tle); dev server z `npm run dev` na 4321 też zostanie użyty.
+- Formularz tworzący dane: przed wpisywaniem `waitForIslandsHydrated(page)` z `tests/e2e/helpers/hydration.ts` — ponowienie fill + submit nie jest bezpieczne, bo tworzy wiersz.
+- Dane i sprzątanie: unikalne wartości z `Date.now()`; brak trasy i polityki delete, więc `afterEach` usuwa wiersz przez `deleteWorkouts` z `tests/e2e/helpers/local-db.ts` (bezpośrednio lokalny Postgres, odmawia hosta innego niż localhost) i asertuje liczbę usuniętych wierszy (`toBe(1)`).
+- Lokatory i czekanie wg `CLAUDE.md`: `getByRole` / `getByLabel` / `getByText`, nigdy CSS/XPath ani `waitForTimeout()`; czekaj na stan (`toBeVisible()`, `waitForURL()`).
+- Sprawdzenie: celowe złamanie chronionego zachowania w `src/` → spec czerwony w tym samym biegu (na zimnym serwerze), potem przywrócenie.
+
+### 6.7 Per-rollout-phase notes
 
 (Uzupełniane przez `/10x-implement` po każdej fazie.)
 
-- **Faza 1 — Izolacja danych i dostęp** (`context/changes/testing-data-isolation-and-access/`): runner Vitest 5 z projektem `integration` i trzy pliki testów (#1, #2, #4). Każdy przeszedł test mutacyjny: polityka select `using (true)` → `rls-workouts` czerwony; brak `enable row level security` → strażnik czerwony (`rls-disabled`); brak kontroli sesji w `POST /api/workouts` → `anonymous-access` czerwony. Testy nie są jeszcze w CI — bramkę podłącza §3 Phase 4. `scripts/smoke.mjs` pozostaje bez zmian.
+- **Faza 1 — Izolacja danych i dostęp** (`context/changes/testing-data-isolation-and-access/`): runner Vitest 5 z projektem `integration` i trzy pliki testów (#1, #2, #4). Każdy przeszedł test mutacyjny: polityka select `using (true)` → `rls-workouts` czerwony; brak `enable row level security` → strażnik czerwony (`rls-disabled`); brak kontroli sesji w `POST /api/workouts` → `anonymous-access` czerwony. Testy nie są jeszcze w CI — bramkę podłącza §3 Phase 2. `scripts/smoke.mjs` pozostaje bez zmian.
 
 ## 7. What We Deliberately Don't Test
 
 - **Strona `Welcome` i resztki startera** — przeznaczone do usunięcia, bez wartości produktowej. Re-evaluate if któraś z nich stanie się częścią przepływu użytkownika. (Source: Phase 2 interview Q5.)
 - **Deploy Workera przed migracją** — ryzyko procesu, nie kodu; pokrywa checklista deployu i opcjonalny pre-prod smoke. Re-evaluate if deploy zostanie zautomatyzowany. (Source: synteza briefu.)
+- **Hooki Claude Code (`.claude/hooks/`)** — narzędzia, nie produkt; bez nowego budżetu testów. Istniejący `tests/hooks/agent-hooks.test.ts` (`npm run test:hooks`) zostaje lokalnie; bramka CI uruchamia `test:integration`, nie `npm test`. Re-evaluate if hook zacznie blokować CI lub psuć się po cichu. (Source: interview 2026-10-13 Q5.)
 
 ## 8. Freshness Ledger
 
