@@ -1,1 +1,0 @@
-Chcę upewnić się, że automatyczne wdrażanie w gałęzi main jest obsługiwane przez {{platform_name}}, a nie przez żaden zewnętrzny system CI/CD.
