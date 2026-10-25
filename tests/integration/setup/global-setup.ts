@@ -75,7 +75,9 @@ export default async function setup(project: TestProject) {
   const supabaseUrl = requireValue(status, "API_URL");
   const supabaseAnonKey = requireValue(status, "ANON_KEY");
   const dbUrl = requireValue(status, "DB_URL");
-  const baseUrl = process.env.BASE_URL ?? "http://localhost:4321";
+  // Tests build URLs, the Origin header and the Location check from it; a trailing slash or path would make
+  // Astro's origin check answer 403, which the anonymous-access probes would count as "denied".
+  const baseUrl = new URL(process.env.BASE_URL ?? "http://localhost:4321").origin;
 
   await checkSupabaseApi(supabaseUrl, supabaseAnonKey);
   await checkPostgres(dbUrl);

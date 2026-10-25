@@ -45,7 +45,7 @@ Notes:
   - Tradeoff: if a policy is broken, the test modifies or deletes every row in the shared local DB, including other runs' data and smoke data. It also covers only `workouts`; each new table needs a copy.
   - Confidence: MED — it depends on PostgREST passing an unfiltered update through, which it does locally since safeupdate is absent.
   - Blind spot: not checked against the Supabase cloud configuration.
-- **Decision**: PENDING
+- **Decision**: DEFERRED (2026-10-25) — revisit with FR-005 (workout editing), when update/delete policies start to matter.
 
 ### F2 — CSRF 403 can pass as "denied" when Origin is malformed
 
@@ -61,7 +61,7 @@ Notes:
   - Tradeoff: one extra request; the control depends on `/api/auth/signin` staying public.
   - Confidence: HIGH — verified with curl against :4321.
   - Blind spot: proxies or URL rewriting in workerd were not tested.
-- **Decision**: PENDING
+- **Decision**: FIXED (2026-10-25) — `global-setup.ts` normalizes `BASE_URL` to `new URL(...).origin`; control `probe requests pass Astro's origin check` (anonymous POST `/api/auth/signout` must not get 403). Proven red with `BASE_URL=http://localhost:4321/` (403 + two `//dashboard` probes), green with and without the trailing slash.
 
 ### F3 — Anonymous insert accepts any error
 
@@ -71,7 +71,7 @@ Notes:
 - **Location**: tests/integration/rls-workouts.test.ts:109-115
 - **Detail**: `expect(error).not.toBeNull()` also passes on a network error, a schema error (PGRST204) or a 400. B's insert correctly pins `42501`.
 - **Fix**: `expect(error?.code).toBe("42501")`, after confirming the code locally; an anon role without INSERT privilege also returns 42501.
-- **Decision**: PENDING
+- **Decision**: FIXED (2026-10-25) — anonymous insert asserts `error?.code === "42501"`. Mutation (insert with an unknown column) turns it red with `PGRST204`.
 
 ### F4 — Positive control exercises only 3 of 5 guard rules
 
@@ -81,7 +81,7 @@ Notes:
 - **Location**: tests/integration/rls-catalog-guard.test.ts:40-64
 - **Detail**: Nothing shows that `view-without-security-invoker` and `materialized-view` fire. A typo in the `reloptions` literal would go unnoticed.
 - **Fix**: In the same rolled-back transaction, add `create view public.__rls_guard_probe_v as select 1` and `create materialized view public.__rls_guard_probe_mv as select 1`, and expect both violations.
-- **Decision**: PENDING
+- **Decision**: DEFERRED (2026-10-25) — observation, accepted for now; not blocking archive.
 
 ### F5 — Guard skips foreign tables and SECURITY DEFINER functions
 
@@ -95,7 +95,7 @@ Notes:
   - Tradeoff: goes beyond the plan's scope (the plan lists 5 rules); a future legitimate SECURITY DEFINER RPC will need an allowlist entry.
   - Confidence: MED — the catalog query is simple, but extensions installed into `public` could add noise (not checked).
   - Blind spot: not checked whether Supabase extensions create SECURITY DEFINER functions in `public`.
-- **Decision**: PENDING
+- **Decision**: DEFERRED (2026-10-25) — observation, accepted for now; not blocking archive.
 
 ### F6 — Route discovery misses `export { … }`
 
@@ -105,7 +105,7 @@ Notes:
 - **Location**: tests/integration/helpers/routes.ts:23
 - **Detail**: The regex detects only `export const|function|async function NAME`. A file with `export const GET` plus `export { handler as POST }` would get GET probed but not POST, and the "≥1 method" control would not catch it.
 - **Fix**: Also match `export\s*\{[^}]*\b(GET|POST|PUT|PATCH|DELETE|ALL)\b[^}]*\}`.
-- **Decision**: PENDING
+- **Decision**: DEFERRED (2026-10-25) — observation, accepted for now; not blocking archive.
 
 ### F7 — Discovery control compares a joined method string
 
@@ -115,7 +115,7 @@ Notes:
 - **Location**: tests/integration/anonymous-access.test.ts:36-40
 - **Detail**: `toContain("POST /api/workouts")` is built from `methods.join(",")`. Adding GET to `/api/workouts` produces `"GET,POST /api/workouts"`, a false alarm (it fails red, not green).
 - **Fix**: Compare (path, method) pairs from `probes` instead of joined strings.
-- **Decision**: PENDING
+- **Decision**: DEFERRED (2026-10-25) — observation, accepted for now; not blocking archive.
 
 ### F8 — Global setup: no timeouts and the password in an error
 
@@ -128,4 +128,4 @@ Notes:
   - The Postgres error message includes the full `DB_URL` with the password; locally that is the default `postgres:postgres`.
   - Related: during the review the dev server returned 500 on every route, and the setup treated that as "server is up".
 - **Fix**: Add `timeout: 30_000` to `execSync` and `AbortSignal.timeout(5000)` to the fetches. Log `new URL(dbUrl).host` instead of the URL. Optionally, fail when `GET /` returns 5xx, with a hint to run `npx astro dev --force`.
-- **Decision**: PENDING
+- **Decision**: DEFERRED (2026-10-25) — observation, accepted for now; not blocking archive.
