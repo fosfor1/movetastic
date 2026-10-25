@@ -110,7 +110,8 @@ describe("workouts RLS: anonymous access", () => {
     const { error } = await createAnonClient()
       .from("workouts")
       .insert({ ...B_VALUES, user_id: userA.id });
-    expect(error).not.toBeNull();
+    // Pin the RLS denial: a network, schema or validation error must not pass as "rejected".
+    expect(error?.code).toBe("42501");
     await expectRowAUnchanged();
   });
 });

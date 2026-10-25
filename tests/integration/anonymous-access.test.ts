@@ -54,6 +54,13 @@ describe("route discovery (controls)", () => {
   test("there is at least one protected route to probe", () => {
     expect(probes.length).toBeGreaterThan(0);
   });
+
+  test("probe requests pass Astro's origin check", async () => {
+    // isDenied accepts 403, so a probe rejected by the CSRF check would pass as "no session". A public POST
+    // endpoint sent the same headers must not get 403 — otherwise every POST probe above is a false green.
+    const response = await anonymousRequest("/api/auth/signout", "POST");
+    expect(response.status, `Origin ${baseUrl} rejected by the origin check`).not.toBe(403);
+  });
 });
 
 describe("anonymous access is denied", () => {
