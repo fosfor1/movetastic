@@ -298,15 +298,15 @@ None. No schema changes.
 
 #### Automated
 
-- [x] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [x] 2.2 `npm run lint:ui` passes with the two new files in `FILES`
-- [x] 2.3 `npm run test:unit` passes
-- [x] 2.4 `npm run test:integration` passes, and `anonymous-access` probes `/dashboard/suggestion` (anonymous → 302 `/auth/signin`)
+- [x] 2.1 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 8d0be15
+- [x] 2.2 `npm run lint:ui` passes with the two new files in `FILES` — 8d0be15
+- [x] 2.3 `npm run test:unit` passes — 8d0be15
+- [x] 2.4 `npm run test:integration` passes, and `anonymous-access` probes `/dashboard/suggestion` (anonymous → 302 `/auth/signin`) — 8d0be15
 
 #### Manual
 
-- [x] 2.5 Signed in at phone width: dashboard → „Sugestia na dziś” → tap 2 → „Lekki wolny bieg” with the load shown; „Wróć” returns to the dashboard
-- [x] 2.6 With load ≤ 100: wellbeing 3 → „Spokojny bieg tlenowy”; wellbeing 5 → „Interwały”
-- [x] 2.7 `/dashboard/suggestion?wellbeing=9` shows the picker with the error, no suggestion
-- [x] 2.8 The load number on the suggestion screen equals the number on the dashboard
-- [x] 2.9 Kitchen sink `/dev/kitchen-sink/dashboard` shows all six suggestion states legibly in the dark theme
+- [x] 2.5 Signed in at phone width: dashboard → „Sugestia na dziś” → tap 2 → „Lekki wolny bieg” with the load shown; „Wróć” returns to the dashboard — 8d0be15
+- [x] 2.6 With load ≤ 100: wellbeing 3 → „Spokojny bieg tlenowy”; wellbeing 5 → „Interwały” — 8d0be15
+- [x] 2.7 `/dashboard/suggestion?wellbeing=9` shows the picker with the error, no suggestion — 8d0be15
+- [x] 2.8 The load number on the suggestion screen equals the number on the dashboard — 8d0be15
+- [x] 2.9 Kitchen sink `/dev/kitchen-sink/dashboard` shows all six suggestion states legibly in the dark theme — 8d0be15

@@ -1,7 +1,7 @@
 ---
 change_id: todays-workout-suggestion
 title: Todays workout suggestion
-status: implementing
+status: implemented
 created: 2026-10-26
 updated: 2026-10-26
 archived_at: null
