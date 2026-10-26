@@ -3,7 +3,7 @@ project: Movetastic
 version: 1
 status: draft
 created: 2026-10-01
-updated: 2026-10-03
+updated: 2026-10-26
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -41,7 +41,7 @@ Amator biegowy trenujący samodzielnie codziennie zastanawia się, jaki trening 
 | ---- | ------------------------- | ---------------------------------------------------------------------------------- | ------------- | --------------------- | -------- |
 | S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01 | done     |
 | S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę               | S-01          | US-01, FR-003         | done     |
-| S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś     | S-02          | FR-003, FR-006, US-01 | proposed |
+| S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś     | S-02          | FR-003, FR-006, US-01 | in-progress |
 
 ## Baseline
 
@@ -98,7 +98,7 @@ Brak. Auth i deploy są już obecne (Baseline), a brakująca warstwa danych jest
   - Które wartości samopoczucia (1-5) liczą się jako „niskie”? — Owner: user. Block: no.
   - Jaki minimalny katalog sugestii (tytuł + opis) obejmuje przypadki z Business Logic poza dwoma przykładami (lekki wolny bieg vs intensywne interwały)? — Owner: user. Block: no.
 - **Risk:** To gwiazda przewodnia — reguła „niskie samopoczucie nigdy nie daje treningu intensywnego” jest twardą gwarancją bezpieczeństwa i musi być zweryfikowana niezależnie od obciążenia.
-- **Status:** proposed
+- **Status:** in-progress
 
 ## Backlog Handoff
 

@@ -8,6 +8,19 @@ export interface Workout {
   created_at: string;
 }
 
+/** Self-reported wellbeing on a 1 (bad) to 5 (great) scale. */
+export type Wellbeing = 1 | 2 | 3 | 4 | 5;
+
+/** Kind of workout suggested for today. */
+export type WorkoutSuggestionKind = "easy" | "steady" | "intervals";
+
+/** A workout suggestion with its user-facing copy. */
+export interface WorkoutSuggestion {
+  kind: WorkoutSuggestionKind;
+  title: string;
+  description: string;
+}
+
 /** Validated input for logging a new workout. */
 export interface NewWorkoutInput {
   /** Calendar date in `YYYY-MM-DD` format. */

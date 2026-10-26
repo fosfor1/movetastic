@@ -1,6 +1,7 @@
 ---
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { roundLoad } from "@/lib/training-load";
 import { cn } from "@/lib/utils";
 import type { Workout } from "@/types";
 
@@ -49,7 +50,7 @@ function formatDate(isoDate: string): string {
     <div class="bg-muted mt-6 rounded-lg border px-4 py-3">
       <p class="text-muted-foreground text-sm">Obciążenie z ostatnich 7 dni</p>
       <p class="mt-1 text-3xl font-bold" data-testid="weekly-load">
-        {loadFormatter.format(weeklyLoad)}
+        {loadFormatter.format(roundLoad(weeklyLoad))}
       </p>
       <p class="text-muted-foreground/75 mt-1 text-xs">Suma z treningów: dystans (km) × średnie tętno ÷ 100</p>
     </div>

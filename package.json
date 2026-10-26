@@ -14,7 +14,8 @@
     "smoke": "node scripts/smoke.mjs",
     "test": "vitest run",
     "test:integration": "vitest run --project integration",
-    "test:hooks": "vitest run --project hooks"
+    "test:hooks": "vitest run --project hooks",
+    "test:unit": "vitest run --project unit"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
