@@ -1,4 +1,5 @@
 ---
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -19,8 +20,6 @@ const { state, pickerError, suggestion, load, wellbeing, errorMessage } = Astro.
 const WELLBEING_OPTIONS: Wellbeing[] = [1, 2, 3, 4, 5];
 
 const loadFormatter = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 });
-
-const alertClass = "border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-3 py-2 text-sm";
 ---
 
 <Card className="mx-auto w-full max-w-lg gap-0 rounded-2xl p-6 backdrop-blur-xl sm:p-8">
@@ -45,9 +44,9 @@ const alertClass = "border-destructive/30 bg-destructive/10 text-destructive rou
         </div>
       </fieldset>
       {pickerError && (
-        <p role="alert" class:list={cn(alertClass, "mt-4")}>
-          {pickerError}
-        </p>
+        <Alert variant="destructive" className="mt-4">
+          <AlertDescription>{pickerError}</AlertDescription>
+        </Alert>
       )}
     </form>
   )}
@@ -67,9 +66,9 @@ const alertClass = "border-destructive/30 bg-destructive/10 text-destructive rou
   )}
 
   {state === "error" && (
-    <p role="alert" class:list={cn(alertClass, "mt-6")}>
-      {errorMessage}
-    </p>
+    <Alert variant="destructive" className="mt-6">
+      <AlertDescription>{errorMessage}</AlertDescription>
+    </Alert>
   )}
 
   <div class="mt-6 flex flex-col gap-3 sm:flex-row">

@@ -4,8 +4,8 @@
 // otherwise wellbeing 3 gives `steady` and wellbeing 4–5 gives `intervals`.
 // The low-wellbeing check comes first and does not depend on load.
 
-import { roundLoad } from "@/lib/training-load";
-import type { Wellbeing, WorkoutSuggestion, WorkoutSuggestionKind } from "@/types";
+import { roundLoad, weeklyTrainingLoad } from "@/lib/training-load";
+import type { SuggestionViewState, Wellbeing, Workout, WorkoutSuggestion, WorkoutSuggestionKind } from "@/types";
 
 /** Weekly load (as displayed, see `roundLoad`) above which only an easy workout is suggested. */
 export const LOAD_THRESHOLD = 100;
@@ -47,4 +47,29 @@ export function suggestWorkout(load: number, wellbeing: Wellbeing): WorkoutSugge
   if (wellbeing <= LOW_WELLBEING_MAX || roundLoad(load) > LOAD_THRESHOLD) return CATALOG.easy;
   if (wellbeing === 3) return CATALOG.steady;
   return CATALOG.intervals;
+}
+
+/** Shown on the picker when the `wellbeing` query value is present but invalid. */
+export const INVALID_WELLBEING_MESSAGE = "Wybierz samopoczucie od 1 do 5.";
+
+/**
+ * Picks the suggestion screen state. Fails closed: a list error wins over every wellbeing value,
+ * so an unknown load never yields a suggestion.
+ */
+export function resolveSuggestionView(input: {
+  workouts: Pick<Workout, "distance_km" | "avg_heart_rate">[];
+  listError: string | null;
+  rawWellbeing: string | null;
+}): SuggestionViewState {
+  if (input.listError) return { state: "error", errorMessage: input.listError };
+
+  const wellbeing = parseWellbeing(input.rawWellbeing);
+  if (wellbeing === null) {
+    return input.rawWellbeing === null
+      ? { state: "picker" }
+      : { state: "picker", pickerError: INVALID_WELLBEING_MESSAGE };
+  }
+
+  const load = weeklyTrainingLoad(input.workouts);
+  return { state: "result", suggestion: suggestWorkout(load, wellbeing), load: roundLoad(load), wellbeing };
 }

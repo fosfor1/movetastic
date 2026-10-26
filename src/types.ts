@@ -21,6 +21,12 @@ export interface WorkoutSuggestion {
   description: string;
 }
 
+/** State of the suggestion screen; `load` is already rounded with `roundLoad`. */
+export type SuggestionViewState =
+  | { state: "picker"; pickerError?: string }
+  | { state: "result"; suggestion: WorkoutSuggestion; load: number; wellbeing: Wellbeing }
+  | { state: "error"; errorMessage: string };
+
 /** Validated input for logging a new workout. */
 export interface NewWorkoutInput {
   /** Calendar date in `YYYY-MM-DD` format. */

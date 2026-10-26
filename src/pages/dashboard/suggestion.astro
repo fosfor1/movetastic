@@ -1,12 +1,10 @@
 ---
-import type { ComponentProps } from "astro/types";
 import Layout from "@/layouts/Layout.astro";
 import SuggestionView from "@/components/suggestion/SuggestionView.astro";
 import { createClient } from "@/lib/supabase";
 import { todayInAppTimeZone } from "@/lib/dates";
 import { listRecentWorkouts } from "@/lib/workouts";
-import { roundLoad, weeklyTrainingLoad } from "@/lib/training-load";
-import { parseWellbeing, suggestWorkout } from "@/lib/workout-suggestion";
+import { resolveSuggestionView } from "@/lib/workout-suggestion";
 import type { Workout } from "@/types";
 
 let workouts: Workout[] = [];
@@ -21,20 +19,8 @@ if (!supabase) {
   listError = result.error;
 }
 
-const rawWellbeing = Astro.url.searchParams.get("wellbeing");
-const wellbeing = parseWellbeing(rawWellbeing);
-
-// Fail closed: without a known load there is no suggestion, so the error state wins over every other state.
-// The rule gets the raw load (it rounds internally); the screen shows the same rounded number as the dashboard.
-let view: ComponentProps<typeof SuggestionView>;
-if (listError) {
-  view = { state: "error", errorMessage: listError };
-} else if (wellbeing === null) {
-  view = { state: "picker", pickerError: rawWellbeing === null ? undefined : "Wybierz samopoczucie od 1 do 5." };
-} else {
-  const load = weeklyTrainingLoad(workouts);
-  view = { state: "result", suggestion: suggestWorkout(load, wellbeing), load: roundLoad(load), wellbeing };
-}
+// Fail closed (unit-tested in resolveSuggestionView): a list error wins over every wellbeing value.
+const view = resolveSuggestionView({ workouts, listError, rawWellbeing: Astro.url.searchParams.get("wellbeing") });
 ---
 
 <Layout title="Sugestia na dziś">

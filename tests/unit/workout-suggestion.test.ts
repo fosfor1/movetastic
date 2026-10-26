@@ -4,7 +4,7 @@
 import { describe, expect, test } from "vitest";
 
 import { roundLoad } from "@/lib/training-load";
-import { parseWellbeing, suggestWorkout } from "@/lib/workout-suggestion";
+import { parseWellbeing, resolveSuggestionView, suggestWorkout } from "@/lib/workout-suggestion";
 import type { Wellbeing, WorkoutSuggestionKind } from "@/types";
 
 describe("suggestWorkout", () => {
@@ -76,6 +76,66 @@ describe("parseWellbeing", () => {
     ["abc", null],
   ])("parseWellbeing(%j) → %j", (raw, expected) => {
     expect(parseWellbeing(raw)).toBe(expected);
+  });
+});
+
+describe("resolveSuggestionView", () => {
+  const LOAD_15 = [{ distance_km: 10, avg_heart_rate: 150 }];
+  const LOAD_100_5 = [{ distance_km: 67, avg_heart_rate: 150 }];
+  const LIST_ERROR = "Nie udało się wczytać treningów.";
+
+  // Fail closed: with a list error no wellbeing value may produce a suggestion.
+  test.each<[string, Parameters<typeof resolveSuggestionView>[0], object]>([
+    [
+      "error + valid wellbeing",
+      { workouts: [], listError: LIST_ERROR, rawWellbeing: "5" },
+      { state: "error", errorMessage: LIST_ERROR },
+    ],
+    [
+      "error + no wellbeing",
+      { workouts: [], listError: LIST_ERROR, rawWellbeing: null },
+      { state: "error", errorMessage: LIST_ERROR },
+    ],
+    [
+      "error + invalid wellbeing",
+      { workouts: [], listError: LIST_ERROR, rawWellbeing: "abc" },
+      { state: "error", errorMessage: LIST_ERROR },
+    ],
+    [
+      "error + workouts present",
+      { workouts: LOAD_100_5, listError: LIST_ERROR, rawWellbeing: "5" },
+      { state: "error", errorMessage: LIST_ERROR },
+    ],
+    ["no wellbeing", { workouts: LOAD_15, listError: null, rawWellbeing: null }, { state: "picker" }],
+    [
+      "empty wellbeing",
+      { workouts: LOAD_15, listError: null, rawWellbeing: "" },
+      { state: "picker", pickerError: "Wybierz samopoczucie od 1 do 5." },
+    ],
+    [
+      "out-of-range wellbeing",
+      { workouts: LOAD_15, listError: null, rawWellbeing: "9" },
+      { state: "picker", pickerError: "Wybierz samopoczucie od 1 do 5." },
+    ],
+    [
+      "low wellbeing",
+      { workouts: LOAD_15, listError: null, rawWellbeing: "2" },
+      { state: "result", suggestion: { kind: "easy" }, load: 15, wellbeing: 2 },
+    ],
+    [
+      "high wellbeing, low load",
+      { workouts: LOAD_15, listError: null, rawWellbeing: "5" },
+      { state: "result", suggestion: { kind: "intervals" }, load: 15, wellbeing: 5 },
+    ],
+    [
+      "high wellbeing, load 100.5",
+      { workouts: LOAD_100_5, listError: null, rawWellbeing: "5" },
+      { state: "result", suggestion: { kind: "easy" }, load: 101, wellbeing: 5 },
+    ],
+  ])("%s", (_label, input, expected) => {
+    const view = resolveSuggestionView(input);
+    expect(view).toMatchObject(expected);
+    expect(Object.keys(view).sort()).toEqual(Object.keys(expected).sort());
   });
 });
 
