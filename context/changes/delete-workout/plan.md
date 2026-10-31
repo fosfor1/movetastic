@@ -370,15 +370,15 @@ The new migration only adds a policy and changes no data. Rollback, if ever need
 
 #### Automated
 
-- [ ] 1.1 Migration applies on a clean database: `npx supabase db reset`
-- [ ] 1.2 Integration suite passes, including the new positive control and policy-shape guard: `npm run test:integration`
-- [ ] 1.3 Mutation check: with the policy body changed to `using (true)` (then reset), the policy-shape guard fails; restored afterwards
-- [ ] 1.4 Mutation check: with the new migration removed (then reset), the owner positive control fails; restored afterwards
-- [ ] 1.5 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 1.1 Migration applies on a clean database: `npx supabase db reset`
+- [x] 1.2 Integration suite passes, including the new positive control and policy-shape guard: `npm run test:integration`
+- [x] 1.3 Mutation check: with the policy body changed to `using (true)` (then reset), the policy-shape guard fails; restored afterwards
+- [x] 1.4 Mutation check: with the new migration removed (then reset), the owner positive control fails; restored afterwards
+- [x] 1.5 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
 
 #### Manual
 
-- [ ] 1.6 In Supabase Studio (local), `workouts` shows three policies: select, insert and delete, all for `authenticated`
+- [x] 1.6 In Supabase Studio (local), `workouts` shows three policies: select, insert and delete, all for `authenticated`
 
 ### Phase 2: Delete flow in the app
 
