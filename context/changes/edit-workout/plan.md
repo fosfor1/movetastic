@@ -419,18 +419,18 @@ The new migration only adds a policy. Rollback, if ever needed: `drop policy wor
 
 #### Automated
 
-- [x] 2.1 Unit tests pass: `npx vitest run --project unit`
-- [x] 2.2 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [x] 2.3 UI literal lint passes with the new files listed: `npm run lint:ui`
-- [x] 2.4 Integration suite passes; anonymous probes include the new edit page and endpoint and both redirect to signin: `npm run test:integration`
-- [x] 2.5 Smoke passes locally against a running dev server, including the new edit, isolation and validation steps: `npm run smoke`
+- [x] 2.1 Unit tests pass: `npx vitest run --project unit` — 4b64fed
+- [x] 2.2 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 4b64fed
+- [x] 2.3 UI literal lint passes with the new files listed: `npm run lint:ui` — 4b64fed
+- [x] 2.4 Integration suite passes; anonymous probes include the new edit page and endpoint and both redirect to signin: `npm run test:integration` — 4b64fed
+- [x] 2.5 Smoke passes locally against a running dev server, including the new edit, isolation and validation steps: `npm run smoke` — 4b64fed
 
 #### Manual
 
-- [x] 2.6 On a phone-width browser: „Edytuj trening” → „Edytuj” → pre-filled form → change distance → „Zapisz zmiany” → notice, new distance, recomputed load
-- [x] 2.7 A future date or HR 500 in the edit form is blocked client-side with the same messages as on the add page
-- [x] 2.8 „Anuluj” on the edit page returns to the dashboard with the workout unchanged
-- [x] 2.9 Kitchen sink shows the new states with no visual regressions (including the add form)
+- [x] 2.6 On a phone-width browser: „Edytuj trening” → „Edytuj” → pre-filled form → change distance → „Zapisz zmiany” → notice, new distance, recomputed load — 4b64fed
+- [x] 2.7 A future date or HR 500 in the edit form is blocked client-side with the same messages as on the add page — 4b64fed
+- [x] 2.8 „Anuluj” on the edit page returns to the dashboard with the workout unchanged — 4b64fed
+- [x] 2.9 Kitchen sink shows the new states with no visual regressions (including the add form) — 4b64fed
 
 ### Phase 3: Production rollout
 
