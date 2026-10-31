@@ -1,10 +1,10 @@
 ---
 change_id: todays-workout-suggestion
 title: Todays workout suggestion
-status: impl_reviewed
+status: archived
 created: 2026-10-26
-updated: 2026-10-26
-archived_at: null
+updated: 2026-10-31
+archived_at: 2026-10-31T14:00:16Z
 ---
 
 ## Notes
