@@ -1,7 +1,8 @@
 // Smoke test: proves the built app, the Cloudflare adapter and the Supabase auth flow still work together,
 // that a signed-in user can log a workout and see it on /dashboard (with validation rejecting bad input),
 // that the dashboard shows the weekly training load computed from that workout (distance_km × avg_heart_rate / 100),
-// and that a second user sees neither the first user's workouts nor their load (per-user isolation).
+// that a second user sees neither the first user's workouts nor their load and can neither open nor delete
+// them (per-user isolation), and that the first user can delete their workout through the confirmation flow.
 // Zero dependencies on purpose. Run against a live server: BASE_URL=http://localhost:4321 node scripts/smoke.mjs
 
 const BASE_URL = process.env.BASE_URL ?? "http://localhost:4321";
@@ -46,6 +47,16 @@ const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 // Matches the load number inside its marked element, so it cannot collide with other numbers on the page.
 const weeklyLoadPattern = (display) => new RegExp(`data-testid="weekly-load"[^>]*>\\s*${escapeRegExp(display)}\\s*<`);
 const EMPTY_STATE = "Brak treningów z ostatnich 7 dni.";
+const DELETED_NOTICE = "Trening usunięty.";
+const NOT_FOUND = "Nie znaleziono treningu.";
+
+// Id of A's workout, captured from its „Usuń” link on the dashboard. Until then (or if capture fails) it is a
+// sentinel that matches no row, so the later delete steps fail on their expectations instead of crashing.
+const MISSING_ID = "ffffffff-ffff-ffff-ffff-ffffffffffff";
+let workoutId = MISSING_ID;
+const DELETE_LINK_PATTERN = /href="\/dashboard\/workouts\/([0-9a-f-]{36})\/delete"/;
+const confirmPath = () => `/dashboard/workouts/${workoutId}/delete`;
+const deletePath = () => `/api/workouts/${workoutId}/delete`;
 
 function cookieHeader() {
   return [...jar.entries()].map(([k, v]) => `${k}=${v}`).join("; ");
@@ -116,6 +127,21 @@ const steps = [
     { status: 200, bodyIncludes: distanceDisplay, bodyMatches: weeklyLoadPattern(loadDisplay) },
   ],
   [
+    "A: dashboard links the workout to its delete confirmation",
+    async () => {
+      const response = await request("/dashboard");
+      const match = DELETE_LINK_PATTERN.exec(response.body);
+      if (match) workoutId = match[1];
+      return response;
+    },
+    { status: 200, bodyMatches: DELETE_LINK_PATTERN },
+  ],
+  [
+    "A: delete confirmation shows the workout",
+    () => request(confirmPath()),
+    { status: 200, bodyIncludes: distanceDisplay },
+  ],
+  [
     "A: heart rate 500 is rejected",
     () => postWorkout({ avg_heart_rate: "500" }),
     { status: 302, location: "/dashboard/workouts/new?error=" },
@@ -147,12 +173,45 @@ const steps = [
     () => request("/dashboard"),
     { status: 200, bodyIncludes: EMPTY_STATE, bodyExcludes: distanceDisplay, bodyMatches: weeklyLoadPattern("0") },
   ],
+  [
+    "B: A's delete confirmation is not found",
+    () => request(confirmPath()),
+    { status: 404, bodyIncludes: NOT_FOUND, bodyExcludes: distanceDisplay },
+  ],
+  [
+    "B: deleting A's workout is refused",
+    () => request(deletePath(), { method: "POST" }),
+    // A function: the workout id is captured by an earlier step, after this array is built.
+    () => ({ status: 302, location: `${confirmPath()}?error=` }),
+  ],
   ["B: signout clears session", () => request("/api/auth/signout", { method: "POST" }), { status: 302, location: "/" }],
+
+  // User A again: deletes the workout through the confirmation flow.
+  [
+    "A: signin again",
+    () => {
+      jar.clear();
+      return request("/api/auth/signin", { method: "POST", form: userA });
+    },
+    { status: 302, location: "/dashboard" },
+  ],
+  [
+    "A: deleting own workout redirects with the notice flag",
+    () => request(deletePath(), { method: "POST" }),
+    { status: 302, location: "/dashboard?deleted=1" },
+  ],
+  [
+    "A: dashboard shows the notice, no workout and weekly load 0",
+    () => request("/dashboard?deleted=1"),
+    { status: 200, bodyIncludes: DELETED_NOTICE, bodyExcludes: distanceDisplay, bodyMatches: weeklyLoadPattern("0") },
+  ],
+  ["A: final signout", () => request("/api/auth/signout", { method: "POST" }), { status: 302, location: "/" }],
 ];
 
 let failed = 0;
-for (const [name, run, expected] of steps) {
+for (const [name, run, expectedOrFn] of steps) {
   const actual = await run();
+  const expected = typeof expectedOrFn === "function" ? expectedOrFn() : expectedOrFn;
   const problems = [];
   if (actual.status !== expected.status) problems.push(`expected status ${expected.status}`);
   if (expected.location !== undefined && !actual.location.startsWith(expected.location)) {

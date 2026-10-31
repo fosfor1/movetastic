@@ -22,10 +22,18 @@ if (!supabase) {
 }
 
 const weeklyLoad = listError ? null : weeklyTrainingLoad(workouts);
+// Set by POST /api/workouts/:id/delete; only the exact value shows the notice.
+const notice = Astro.url.searchParams.get("deleted") === "1" ? "Trening usunięty." : undefined;
 ---
 
 <Layout title="Twoje treningi">
   <div class="bg-cosmic min-h-screen p-4">
-    <DashboardView email={user?.email} weeklyLoad={weeklyLoad} workouts={workouts} listError={listError} />
+    <DashboardView
+      email={user?.email}
+      weeklyLoad={weeklyLoad}
+      workouts={workouts}
+      listError={listError}
+      notice={notice}
+    />
   </div>
 </Layout>
