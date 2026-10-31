@@ -37,13 +37,13 @@ Amator biegowy trenujący samodzielnie codziennie zastanawia się, jaki trening 
 
 ## At a glance
 
-| ID   | Change ID                 | Outcome (user can …)                                                               | Prerequisites | PRD refs              | Status |
-| ---- | ------------------------- | ---------------------------------------------------------------------------------- | ------------- | --------------------- | ------ |
-| S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01 | done   |
-| S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę               | S-01          | US-01, FR-003         | done   |
-| S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś     | S-02          | FR-003, FR-006, US-01 | done   |
-| S-04 | delete-workout            | usunąć wybrany trening z listy 7 dni (po potwierdzeniu)                            | S-01          | FR-007, US-02         | done   |
-| S-05 | edit-workout              | poprawić datę, dystans i średnie tętno wybranego treningu z listy 7 dni            | S-01          | FR-005, US-01, US-02  | ready  |
+| ID   | Change ID                 | Outcome (user can …)                                                               | Prerequisites | PRD refs              | Status   |
+| ---- | ------------------------- | ---------------------------------------------------------------------------------- | ------------- | --------------------- | -------- |
+| S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01 | done     |
+| S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę               | S-01          | US-01, FR-003         | done     |
+| S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś     | S-02          | FR-003, FR-006, US-01 | done     |
+| S-04 | delete-workout            | usunąć wybrany trening z listy 7 dni (po potwierdzeniu)                            | S-01          | FR-007, US-02         | done     |
+| S-05 | edit-workout              | poprawić datę, dystans i średnie tętno wybranego treningu z listy 7 dni            | S-01          | FR-005, US-01, US-02  | in-progress |
 
 ## Baseline
 
@@ -124,7 +124,7 @@ Brak. Auth, deploy i tabela treningów już istnieją (Baseline). Brakujące pol
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Edycja nie może ominąć walidacji (ryzyko #6: nierealne dane psują obciążenie) ani przenieść treningu do innego właściciela (ryzyko #1); technicznie niezależna od S-04, ale prościej po niej, bo przejmie wybór treningu z listy.
-- **Status:** ready
+- **Status:** in-progress
 
 ## Backlog Handoff
 
