@@ -1,0 +1,72 @@
+---
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { formatDistance, formatWorkoutDate } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import type { DeleteWorkoutViewState } from "@/types";
+
+type Props = DeleteWorkoutViewState;
+
+const view = Astro.props;
+---
+
+<Card className="mx-auto w-full max-w-lg gap-0 rounded-2xl p-6 backdrop-blur-xl sm:p-8">
+  <h1 class="text-xl font-bold sm:text-2xl">Usuń trening</h1>
+
+  {view.state === "confirm" && (
+    <>
+      <p class="text-muted-foreground mt-3 text-sm">Usunięcia nie można cofnąć. Czy na pewno usunąć ten trening?</p>
+
+      <div class="bg-muted mt-6 rounded-lg border px-4 py-3">
+        <p class="font-medium">{formatWorkoutDate(view.workout.workout_date)}</p>
+        <p class="text-muted-foreground mt-1 text-sm">
+          {formatDistance(view.workout.distance_km)} km · śr. tętno {view.workout.avg_heart_rate} ud/min
+        </p>
+      </div>
+
+      {view.error && (
+        <Alert variant="destructive" className="mt-4">
+          <AlertDescription>{view.error}</AlertDescription>
+        </Alert>
+      )}
+
+      <form
+        method="POST"
+        action={`/api/workouts/${encodeURIComponent(view.workout.id)}/delete`}
+        class="mt-6 flex flex-col gap-3 sm:flex-row"
+      >
+        <button type="submit" class:list={cn(buttonVariants({ variant: "destructive" }), "w-full sm:flex-1")}>
+          Usuń trening
+        </button>
+        <a href="/dashboard" class:list={cn(buttonVariants({ variant: "outline" }), "w-full sm:flex-1")}>
+          Anuluj
+        </a>
+      </form>
+    </>
+  )}
+
+  {view.state === "not-found" && (
+    <>
+      <p class="text-muted-foreground mt-3 text-sm">Nie znaleziono treningu.</p>
+      <div class="mt-6">
+        <a href="/dashboard" class:list={cn(buttonVariants({ variant: "outline" }), "w-full")}>
+          Wróć do treningów
+        </a>
+      </div>
+    </>
+  )}
+
+  {view.state === "error" && (
+    <>
+      <Alert variant="destructive" className="mt-6">
+        <AlertDescription>{view.errorMessage}</AlertDescription>
+      </Alert>
+      <div class="mt-6">
+        <a href="/dashboard" class:list={cn(buttonVariants({ variant: "outline" }), "w-full")}>
+          Wróć
+        </a>
+      </div>
+    </>
+  )}
+</Card>

@@ -1,7 +1,10 @@
 // Risk #1 (test-plan §2): user B must not read or change user A's workouts, and an anonymous caller must
-// not reach them at all. Exercised directly against PostgREST with two real sessions. RLS denials on
-// select/update/delete return 0 rows without an error, so every denial is confirmed by reading A's row as A.
-import { beforeAll, describe, expect, test } from "vitest";
+// not reach them at all. Exercised directly against PostgREST with two real sessions. The owner may delete
+// its own rows (positive control below); update stays denied for everyone. RLS denials on select/update/delete
+// return 0 rows without an error, so every denial is confirmed by reading A's row as A. Because the select
+// policy hides a too-broad delete policy from B, a catalog check pins the DELETE policy shape (test-plan F1).
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { connectDb } from "./helpers/db";
 import { createAnonClient, createTestUser, type TestUser } from "./helpers/supabase";
 
 interface WorkoutRow {
@@ -16,6 +19,17 @@ const COLUMNS = "id, user_id, workout_date, distance_km, avg_heart_rate";
 const A_VALUES = { workout_date: "2026-01-15", distance_km: 12.34, avg_heart_rate: 145 };
 // Distinct from A's values, so "A sees no row with B's values" cannot match A's own row.
 const B_VALUES = { workout_date: "2026-01-16", distance_km: 77.77, avg_heart_rate: 177 };
+// A's second, dedicated row for the owner-delete test; `rowA` stays live for the denial tests.
+const A_DISPOSABLE_VALUES = { workout_date: "2026-01-17", distance_km: 5.55, avg_heart_rate: 133 };
+
+const sql = connectDb();
+
+interface PolicyRow {
+  policyname: string;
+  permissive: string;
+  roles: string[];
+  qual: string | null;
+}
 
 let userA: TestUser;
 let userB: TestUser;
@@ -46,6 +60,10 @@ beforeAll(async () => {
     .overrideTypes<WorkoutRow, { merge: false }>();
   if (error) throw new Error(`A could not insert its own workout: ${error.message}`, { cause: error });
   rowA = data;
+});
+
+afterAll(async () => {
+  await sql.end({ timeout: 5 });
 });
 
 describe("workouts RLS: isolation between users", () => {
@@ -96,6 +114,43 @@ describe("workouts RLS: isolation between users", () => {
     expect(error).toBeNull();
     expect(data).toEqual([]);
     await expectRowAUnchanged();
+  });
+
+  test("A deleting its own row removes exactly that row", async () => {
+    const { data: inserted, error: insertError } = await userA.client
+      .from("workouts")
+      .insert({ ...A_DISPOSABLE_VALUES, user_id: userA.id })
+      .select("id")
+      .single()
+      .overrideTypes<Pick<WorkoutRow, "id">, { merge: false }>();
+    if (insertError)
+      throw new Error(`A could not insert its own workout: ${insertError.message}`, { cause: insertError });
+
+    const { data, error } = await userA.client.from("workouts").delete().eq("id", inserted.id).select("id");
+    expect(error).toBeNull();
+    expect(data).toEqual([{ id: inserted.id }]);
+
+    const { data: after, error: readError } = await userA.client.from("workouts").select("id").eq("id", inserted.id);
+    expect(readError).toBeNull();
+    expect(after).toEqual([]);
+    await expectRowAUnchanged();
+  });
+
+  test("the only DELETE policy on workouts is the owner check for authenticated", async () => {
+    // `ALL` policies also apply to delete, so they count as delete policies here.
+    const policies = await sql<PolicyRow[]>`
+      select policyname, permissive, roles, qual
+      from pg_policies
+      where schemaname = 'public' and tablename = 'workouts' and cmd in ('DELETE', 'ALL')
+    `;
+    expect([...policies]).toEqual([
+      {
+        policyname: "workouts_delete_own",
+        permissive: "PERMISSIVE",
+        roles: ["authenticated"],
+        qual: "(( SELECT auth.uid() AS uid) = user_id)",
+      },
+    ]);
   });
 });
 
