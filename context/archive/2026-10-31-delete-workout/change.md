@@ -1,10 +1,10 @@
 ---
 change_id: delete-workout
 title: Delete workout
-status: implemented
+status: archived
 created: 2026-10-31
 updated: 2026-10-31
-archived_at: null
+archived_at: 2026-10-31T16:50:50Z
 ---
 
 ## Notes
