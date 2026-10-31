@@ -14,6 +14,7 @@ status: deployed
 What's in place now: no git remote or commits, `gh` not installed, wrangler not authenticated, no local `.dev.vars`, no Supabase migrations. There is a hosted Supabase project in an EU region.
 
 Decisions already made:
+
 - **Manual deploy only.** No GitHub Actions deploy job in this pass.
 - **Full smoke test against production**, then delete the test account by hand.
 
@@ -26,63 +27,79 @@ Deploy commands are Workers commands: `wrangler deploy`, `wrangler secret put`, 
 Legend: 🤖 agent does it · 🧑 human does it (manual gate) · ⛔ agent waits for explicit human "go"
 
 ### 0. 🤖 Save the plan
+
 Copy this plan to `context/deployment/deploy-plan.md` (create `context/deployment/`). This is the "what was supposed to happen" record for later milestone planning.
 
 ### 1. 🤖 Pre-flight: CI gate + dry run
+
 - `npx astro sync && npm run lint && npx astro check && npm run build` must pass. No Supabase values are needed at build time: the secrets are `access: "secret"`, so they're read at runtime and not inlined.
 - `npx wrangler deploy --dry-run`. This deploys nothing. It checks bundle size, the `ASSETS` binding and the compatibility date/flags (`2026-05-08`, `nodejs_compat`).
 
 ### 2. 🧑 Log in to Cloudflare
+
 - Run `! npx wrangler login` in the Claude Code prompt. It opens a browser OAuth flow.
 - If the account has no `workers.dev` subdomain yet, register one in the dashboard: Workers & Pages → your subdomain. First-time registration can prompt interactively.
 - 🤖 then runs `npx wrangler whoami` to confirm the account and account ID.
 
 ### 3. 🧑 Supabase dashboard (production project)
+
 - Settings → General: confirm the region is EU. Frankfurt `eu-central-1` is ideal.
 - Authentication → Sign In / Providers → Email: turn **"Confirm email" OFF**. The smoke test's signup → signin flow needs this.
 - Settings → API: have the **Project URL** and the **anon / publishable key** ready. **Never the service_role key.**
 - Don't paste the values into the chat.
 
 ### 4. ⛔🤖 First deploy
+
 After the human approves:
+
 - `npm run build && npx wrangler deploy`
 - Record the output: the `workers.dev` URL, the Version ID and the Deployment ID.
 
 The Worker has no secrets at this point, so `createClient()` returns `null`. Pages render but auth is inactive. That's harmless for a few minutes on an unannounced URL.
 
 ### 5. 🧑 Runtime secrets
+
 Run these in your **own terminal**, because they are interactive and keep the values out of the chat:
+
 ```
 npx wrangler secret put SUPABASE_URL
 npx wrangler secret put SUPABASE_KEY
 ```
+
 Each command publishes a new version immediately. 🤖 then runs `npx wrangler secret list` to confirm both names are there; it shows names only.
 
 ### 6. 🧑 Supabase auth URLs
+
 Authentication → URL Configuration:
+
 - **Site URL** = `https://movetastic.<subdomain>.workers.dev`
 - Add the same URL to **Redirect URLs**.
 
 This keeps later auth emails and redirects from pointing at localhost.
 
 ### 7. 🤖 Verify production
+
 - In the background: `npx wrangler tail movetastic --format pretty`. Watch for exceptions, `1102` CPU-limit errors and anything that looks like a null client.
 - Smoke test from Git Bash: `BASE_URL=https://movetastic.<subdomain>.workers.dev npm run smoke`. All 8 steps must PASS. The test creates the user `smoke-<timestamp>@example.com`.
 - `npx wrangler deployments list` should show the deploy plus two secret versions.
 - Check CPU time per request in the Workers Logs dashboard (`observability.enabled` is already on). If any request is close to 10 ms, recommend upgrading to Workers Paid ($5/month). That's a human billing decision.
 
 ### 8. 🧑 Clean up
+
 - Supabase → Authentication → Users: delete the `smoke-…@example.com` account.
 - Decide on "Confirm email". Recommendation: leave it OFF during MVP testing and turn it back ON before a public launch. Note that re-enabling it breaks the production smoke test.
 
 ### 9. 🤖 Record the outcome
+
 Append a **Deployed** section to `context/deployment/deploy-plan.md` with:
+
 - the date, URL, Version ID
 - the secret names that are configured (never the values)
 - the smoke result and the CPU observation
 - open follow-ups
 
 ## Rollback / approval posture
+
 - **Rollback:** `npx wrangler versions list` → `npx wrangler rollback <VERSION_ID> --message "<reason>"`. For this first deploy there's no earlier code version, so a bad deploy gets a forward fix plus redeploy.
 - **Human only:**
   - `wrangler login` and any API-token creation
@@ -93,6 +110,7 @@ Append a **Deployed** section to `context/deployment/deploy-plan.md` with:
 - **Agent may, after approval of step 4:** build, dry run, deploy, `tail`, `secret list`, `deployments list`, running the smoke test.
 
 ## Out of scope (follow-ups)
+
 - The GitHub Actions deploy job. It needs a git remote, a first commit, a scoped `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` in GitHub Secrets.
 - Custom domain.
 - Preview-URL protection (Cloudflare Access).
@@ -100,6 +118,7 @@ Append a **Deployed** section to `context/deployment/deploy-plan.md` with:
 - Setting `site` in `astro.config.mjs` so the sitemap stops being skipped. Do it once the final domain is known.
 
 ## Critical files
+
 - `wrangler.jsonc`: read only, already correct.
 - `astro.config.mjs`: `env.schema`, read only.
 - `src/lib/supabase.ts`: the `null` branch. Reason for the secrets check.
@@ -107,7 +126,9 @@ Append a **Deployed** section to `context/deployment/deploy-plan.md` with:
 - `context/deployment/deploy-plan.md`: new, the audit trail.
 
 ## Verification summary
+
 Deployment is done when:
+
 - `npm run smoke` against the `workers.dev` URL prints "All smoke steps passed"
 - `wrangler tail` shows no exceptions during the run
 - `wrangler secret list` shows `SUPABASE_URL` and `SUPABASE_KEY`
@@ -144,3 +165,22 @@ Deployment is done when:
 - Set `site` in `astro.config.mjs` to the production URL so the sitemap is generated.
 - Git remote + first commit, then GitHub Actions deploy job with a scoped `CLOUDFLARE_API_TOKEN` (Workers Scripts:Edit, this account only) + `CLOUDFLARE_ACCOUNT_ID`.
 - Protect or disable preview URLs before real user data exists.
+
+## Later deploys
+
+Same procedure as the first deploy: `npm run build && npx wrangler deploy --dry-run`, then `npx wrangler deploy`, then the production smoke test. Rollback: `npx wrangler rollback <previous Version ID> --message "<reason>"`.
+
+| Date       | Version ID                             | Code                                                        | DB migration                                          | Verification                                                                                                                        |
+| ---------- | -------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-10-03 | `2e00a232-d55e-40dc-92cb-c3f5407057c5` | S-01 log-completed-workout                                  | `20261003120000_create_workouts` (`supabase db push`) | not recorded at the time                                                                                                            |
+| 2026-10-03 | `9f338e43-1c0a-41a5-8dd6-c9f959488374` | S-02 weekly-training-load                                   | none                                                  | not recorded at the time                                                                                                            |
+| 2026-10-31 | `600fa482-9d38-49d1-9ede-24788c41786c` | `c43accf` (S-03 todays-workout-suggestion, PR #7 `15dc307`) | none (remote migrations match local)                  | smoke 12/12 PASS; anonymous `/dashboard/suggestion` → 302 signin; signed-in suggestion flow checked in browser; smoke users deleted |
+
+The 2026-10-03 rows were reconstructed on 2026-10-31 from `npx wrangler deployments list` and the archived S-01 plan; their code mapping is inferred from the dates.
+
+### Deploy checklist (until a CI deploy job exists)
+
+- Run `npx supabase migration list --linked`; if local has migrations the remote lacks, run `npx supabase db push` **before** deploying the Worker.
+- Build, dry run, deploy, then `BASE_URL=https://movetastic.sebastian-kowalski85.workers.dev npm run smoke`.
+- Delete the `smoke-…@example.com` users in Supabase → Authentication → Users.
+- Add a row to the table above (Version ID from the deploy output).
