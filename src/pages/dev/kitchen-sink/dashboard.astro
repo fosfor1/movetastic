@@ -1,14 +1,15 @@
 ---
-// Visual gate for DashboardView and SuggestionView: every applicable state side by side, from fixtures. Dev only.
+// Visual gate for DashboardView, SuggestionView and DeleteWorkoutView: every applicable state side by side, from fixtures. Dev only.
 import type { ComponentProps } from "astro/types";
 import Layout from "@/layouts/Layout.astro";
 import DashboardView from "@/components/dashboard/DashboardView.astro";
 import SuggestionView from "@/components/suggestion/SuggestionView.astro";
+import DeleteWorkoutView from "@/components/workouts/DeleteWorkoutView.astro";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { weeklyTrainingLoad } from "@/lib/training-load";
 import { suggestWorkout } from "@/lib/workout-suggestion";
-import type { Workout } from "@/types";
+import type { DeleteWorkoutViewState, Workout } from "@/types";
 
 // Dev only: production answers 404 with an empty body. (A top-level `return` in frontmatter crashes
 // @typescript-eslint/no-misused-promises, so the status is set and the markup is gated instead.)
@@ -45,6 +46,10 @@ const workouts: Workout[] = [
 
 const states = [
   { label: "default", props: { email, weeklyLoad: weeklyTrainingLoad(workouts), workouts, listError: null } },
+  {
+    label: "deleted",
+    props: { email, weeklyLoad: weeklyTrainingLoad(workouts), workouts, listError: null, notice: "Trening usunięty." },
+  },
   { label: "empty", props: { email, weeklyLoad: 0, workouts: [], listError: null } },
   {
     label: "error",
@@ -67,6 +72,19 @@ const suggestionStates: { label: string; props: ComponentProps<typeof Suggestion
   {
     label: "error",
     props: { state: "error", errorMessage: "Nie można wczytać treningów: Supabase nie jest skonfigurowany." },
+  },
+];
+
+const deleteStates: { label: string; props: DeleteWorkoutViewState }[] = [
+  { label: "confirm", props: { state: "confirm", workout: workouts[0] } },
+  {
+    label: "confirm + error",
+    props: { state: "confirm", workout: workouts[0], error: "Nie udało się usunąć treningu." },
+  },
+  { label: "not-found", props: { state: "not-found" } },
+  {
+    label: "error",
+    props: { state: "error", errorMessage: "Nie udało się wczytać treningu. Spróbuj ponownie później." },
   },
 ];
 
@@ -98,6 +116,17 @@ const ctaHoverClass = cn(ctaClass, "bg-primary/90");
           <section class="space-y-3">
             <h3 class="text-muted-foreground text-sm font-semibold tracking-wide uppercase">{state.label}</h3>
             <SuggestionView {...state.props} />
+          </section>
+        ))}
+      </div>
+
+      <h2 class="text-xl font-bold">Usuń trening: DeleteWorkoutView</h2>
+
+      <div class="grid gap-6 xl:grid-cols-3">
+        {deleteStates.map((state) => (
+          <section class="space-y-3">
+            <h3 class="text-muted-foreground text-sm font-semibold tracking-wide uppercase">{state.label}</h3>
+            <DeleteWorkoutView {...state.props} />
           </section>
         ))}
       </div>

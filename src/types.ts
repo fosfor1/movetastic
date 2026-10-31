@@ -34,3 +34,9 @@ export interface NewWorkoutInput {
   distance_km: number;
   avg_heart_rate: number;
 }
+
+/** State of the delete-workout confirmation screen. */
+export type DeleteWorkoutViewState =
+  | { state: "confirm"; workout: Workout; error?: string }
+  | { state: "not-found" }
+  | { state: "error"; errorMessage: string };

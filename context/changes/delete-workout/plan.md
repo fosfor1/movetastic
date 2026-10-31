@@ -370,32 +370,32 @@ The new migration only adds a policy and changes no data. Rollback, if ever need
 
 #### Automated
 
-- [x] 1.1 Migration applies on a clean database: `npx supabase db reset`
-- [x] 1.2 Integration suite passes, including the new positive control and policy-shape guard: `npm run test:integration`
-- [x] 1.3 Mutation check: with the policy body changed to `using (true)` (then reset), the policy-shape guard fails; restored afterwards
-- [x] 1.4 Mutation check: with the new migration removed (then reset), the owner positive control fails; restored afterwards
-- [x] 1.5 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 1.1 Migration applies on a clean database: `npx supabase db reset` — af98ffa
+- [x] 1.2 Integration suite passes, including the new positive control and policy-shape guard: `npm run test:integration` — af98ffa
+- [x] 1.3 Mutation check: with the policy body changed to `using (true)` (then reset), the policy-shape guard fails; restored afterwards — af98ffa
+- [x] 1.4 Mutation check: with the new migration removed (then reset), the owner positive control fails; restored afterwards — af98ffa
+- [x] 1.5 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — af98ffa
 
 #### Manual
 
-- [x] 1.6 In Supabase Studio (local), `workouts` shows three policies: select, insert and delete, all for `authenticated`
+- [x] 1.6 In Supabase Studio (local), `workouts` shows three policies: select, insert and delete, all for `authenticated` — af98ffa
 
 ### Phase 2: Delete flow in the app
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass, including the new `isUuid` table: `npx vitest run --project unit`
-- [ ] 2.2 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [ ] 2.3 UI literal lint passes with the new files listed: `npm run lint:ui`
-- [ ] 2.4 Integration suite passes; anonymous probes include the new delete page and endpoint and both redirect to signin: `npm run test:integration`
-- [ ] 2.5 Smoke passes locally against a running dev server, including the new delete and isolation steps: `npm run smoke`
+- [x] 2.1 Unit tests pass, including the new `isUuid` table: `npx vitest run --project unit`
+- [x] 2.2 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 2.3 UI literal lint passes with the new files listed: `npm run lint:ui`
+- [x] 2.4 Integration suite passes; anonymous probes include the new delete page and endpoint and both redirect to signin: `npm run test:integration`
+- [x] 2.5 Smoke passes locally against a running dev server, including the new delete and isolation steps: `npm run smoke`
 
 #### Manual
 
-- [ ] 2.6 On a phone-width browser: dashboard → „Usuń” → confirmation → „Usuń trening” → notice shown, workout gone, load dropped
-- [ ] 2.7 „Anuluj” returns to the dashboard and the workout is still listed
-- [ ] 2.8 Kitchen sink shows the new states with no visual regressions in the existing ones
-- [ ] 2.9 `/dashboard/workouts/not-a-uuid/delete` shows „Nie znaleziono treningu.” with no Postgres error in the log
+- [x] 2.6 On a phone-width browser: dashboard → „Usuń” → confirmation → „Usuń trening” → notice shown, workout gone, load dropped
+- [x] 2.7 „Anuluj” returns to the dashboard and the workout is still listed
+- [x] 2.8 Kitchen sink shows the new states with no visual regressions in the existing ones
+- [x] 2.9 `/dashboard/workouts/not-a-uuid/delete` shows „Nie znaleziono treningu.” with no Postgres error in the log
 
 ### Phase 3: Production rollout
 

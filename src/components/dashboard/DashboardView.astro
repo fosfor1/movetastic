@@ -2,6 +2,7 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { formatDistance, formatWorkoutDate } from "@/lib/format";
 import { roundLoad } from "@/lib/training-load";
 import { cn } from "@/lib/utils";
 import type { Workout } from "@/types";
@@ -11,26 +12,13 @@ interface Props {
   weeklyLoad: number | null;
   workouts: Workout[];
   listError: string | null;
+  /** Success notice shown above the list (e.g. after a delete). */
+  notice?: string;
 }
 
-const { email, weeklyLoad, workouts, listError } = Astro.props;
+const { email, weeklyLoad, workouts, listError, notice } = Astro.props;
 
 const loadFormatter = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 });
-
-const dateFormatter = new Intl.DateTimeFormat("pl-PL", {
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-  timeZone: "UTC",
-});
-const distanceFormatter = new Intl.NumberFormat("pl-PL", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-function formatDate(isoDate: string): string {
-  const [year, month, day] = isoDate.split("-").map(Number);
-  const formatted = dateFormatter.format(new Date(Date.UTC(year, month - 1, day)));
-  // Capitalize only the weekday; Polish month names stay lowercase.
-  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
-}
 ---
 
 <Card className="mx-auto w-full max-w-lg gap-0 rounded-2xl p-6 backdrop-blur-xl sm:p-8">
@@ -68,6 +56,12 @@ function formatDate(isoDate: string): string {
 
   <h2 class="mt-8 mb-4 text-lg font-semibold sm:text-xl">Ostatnie 7 dni</h2>
 
+  {notice && (
+    <Alert className="mb-4">
+      <AlertDescription>{notice}</AlertDescription>
+    </Alert>
+  )}
+
   {listError ? (
     <Alert variant="destructive">
       <AlertDescription>{listError}</AlertDescription>
@@ -82,11 +76,20 @@ function formatDate(isoDate: string): string {
   ) : (
     <ul class="space-y-2">
       {workouts.map((workout) => (
-        <li class="bg-muted rounded-lg border px-4 py-3">
-          <p class="font-medium">{formatDate(workout.workout_date)}</p>
-          <p class="text-muted-foreground mt-1 text-sm">
-            {distanceFormatter.format(workout.distance_km)} km · śr. tętno {workout.avg_heart_rate} ud/min
-          </p>
+        <li class="bg-muted flex items-start justify-between gap-3 rounded-lg border px-4 py-3">
+          <div class="min-w-0">
+            <p class="font-medium">{formatWorkoutDate(workout.workout_date)}</p>
+            <p class="text-muted-foreground mt-1 text-sm">
+              {formatDistance(workout.distance_km)} km · śr. tętno {workout.avg_heart_rate} ud/min
+            </p>
+          </div>
+          <a
+            href={`/dashboard/workouts/${encodeURIComponent(workout.id)}/delete`}
+            aria-label={`Usuń trening z ${formatWorkoutDate(workout.workout_date)}`}
+            class:list={cn(buttonVariants({ variant: "link", size: "sm" }), "shrink-0 px-0")}
+          >
+            Usuń
+          </a>
         </li>
       ))}
     </ul>

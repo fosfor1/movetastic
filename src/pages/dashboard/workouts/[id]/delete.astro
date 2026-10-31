@@ -1,0 +1,37 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import DeleteWorkoutView from "@/components/workouts/DeleteWorkoutView.astro";
+import { createClient } from "@/lib/supabase";
+import { getWorkout } from "@/lib/workouts";
+import type { DeleteWorkoutViewState } from "@/types";
+
+const id = Astro.params.id ?? "";
+const deleteError = Astro.url.searchParams.get("error") ?? undefined;
+
+let view: DeleteWorkoutViewState;
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+if (!supabase) {
+  view = { state: "error", errorMessage: "Nie można wczytać treningu: Supabase nie jest skonfigurowany." };
+} else {
+  const result = await getWorkout(supabase, id);
+  if (result.error) {
+    view = { state: "error", errorMessage: result.error };
+  } else if (!result.data) {
+    view = { state: "not-found" };
+  } else {
+    view = { state: "confirm", workout: result.data, error: deleteError };
+  }
+}
+
+// Missing, foreign (hidden by RLS) and malformed ids all answer 404.
+if (view.state === "not-found") {
+  Astro.response.status = 404;
+}
+---
+
+<Layout title="Usuń trening">
+  <div class="bg-cosmic min-h-screen p-4">
+    <DeleteWorkoutView {...view} />
+  </div>
+</Layout>
