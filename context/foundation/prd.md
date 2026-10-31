@@ -1,6 +1,6 @@
 ---
 project: "Movetastic"
-version: 1
+version: 2
 status: draft
 created: 2026-09-18
 context_type: greenfield
@@ -28,12 +28,15 @@ Gotowe plany treningowe (PDF-y, popularne aplikacje biegowe) są sztywne — zak
 ## Success Criteria
 
 ### Primary
+
 - Użytkownik otwiera aplikację i widzi sugestię dzisiejszego treningu, dopasowaną do obciążenia treningowego z poprzedniego tygodnia (np. po tygodniu wolnego biegania aplikacja sugeruje interwały o wysokiej intensywności).
 
 ### Secondary
+
 - Ocena aktualnego poziomu wytrenowania i przewidywane wyniki na dystansach 5K, 10K, półmaraton i maraton.
 
 ### Guardrails
+
 - Prywatność danych treningowych użytkownika musi być zachowana.
 
 ## User Stories
@@ -45,11 +48,24 @@ Gotowe plany treningowe (PDF-y, popularne aplikacje biegowe) są sztywne — zak
 - **Then** widzi tytuł i opis sugerowanego treningu, dopasowanego do obciążenia z ostatniego tygodnia i wskazanego samopoczucia, oraz przycisk powrotu do poprzedniego ekranu
 
 #### Acceptance Criteria
+
 - Ekran główny pokazuje wyliczone obciążenie treningowe z ostatnich 7 dni jako konkretną liczbę
 - Ekran główny zawiera trzy przyciski: "dodaj trening", "edytuj trening", "sugestia na dziś"
 - Po wybraniu "sugestia na dziś" użytkownik najpierw wskazuje dzisiejsze samopoczucie w skali 1-5, zanim zobaczy sugestię
 - Po wybraniu "dodaj trening" użytkownik wprowadza datę, dystans i średnie tętno
 - Po wybraniu "edytuj trening" użytkownik wybiera jeden z treningów z ostatniego tygodnia i edytuje wcześniej wprowadzone dane (datę, dystans, średnie tętno)
+
+### US-02: Użytkownik poprawia albo usuwa błędnie wpisany trening
+
+- **Given** zalogowany użytkownik na ekranie głównym z listą swoich treningów z ostatnich 7 dni
+- **When** użytkownik wybiera trening z listy i zmienia jego dane albo go usuwa
+- **Then** lista i obciążenie z ostatnich 7 dni od razu odzwierciedlają zmianę, a następna sugestia treningu na dziś liczy się już z poprawionych danych
+
+#### Acceptance Criteria
+
+- Edycja przyjmuje te same pola i te same zasady poprawności co dodawanie (data nie z przyszłości, realny dystans i średnie tętno)
+- Usunięcie wymaga potwierdzenia przed wykonaniem
+- Użytkownik może edytować i usuwać wyłącznie własne treningi
 
 ## Functional Requirements
 
@@ -61,9 +77,10 @@ Gotowe plany treningowe (PDF-y, popularne aplikacje biegowe) są sztywne — zak
   > Socrates: Kontrargument rozważony: "sugestia oparta wyłącznie na historii, bez sygnału o dzisiejszym samopoczuciu, może polecić trening wysokiej intensywności mimo zmęczenia/kontuzji — powielając problem sztywnych planów". Rozstrzygnięcie: sugestia uwzględnia teraz też dzisiejsze samopoczucie — patrz FR-006.
 - FR-004: Użytkownik może ustawić swój cel treningowy (5K/10K/maraton). Priority: nice-to-have
   > Socrates: Kontrargument rozważony: "cel niepotrzebny w MVP — sugestia na dziś (FR-003) działa bez znajomości celu". Rozstrzygnięcie: obniżone do nice-to-have; poza MVP (patrz Non-Goals).
-- FR-005: Użytkownik może edytować wcześniej wprowadzone dane treningowe. Priority: nice-to-have
-  > Socrates: Kontrargument rozważony: "edycja to zbędny zakres na MVP — główny przepływ (dodaj + zobacz sugestię) działa bez niej". Rozstrzygnięcie: obniżone do nice-to-have; poza MVP (patrz Non-Goals).
+- FR-005: Użytkownik może edytować wcześniej wprowadzone dane treningowe. Priority: must-have
+  > Socrates: Kontrargument rozważony: "edycja to zbędny zakres na MVP — główny przepływ (dodaj + zobacz sugestię) działa bez niej". Rozstrzygnięcie (v1): obniżone do nice-to-have. Zmiana w v2: podniesione do must-have — błędnie wpisany trening na stałe psuje obciążenie, a więc i sugestię; bez edycji nie da się tego naprawić.
 - FR-006: Użytkownik może wskazać dzisiejsze samopoczucie w skali 1-5 przed zobaczeniem sugestii treningu na dziś. Priority: must-have
+- FR-007: Użytkownik może usunąć wcześniej wprowadzony trening. Priority: must-have
 
 ## Non-Functional Requirements
 
@@ -88,7 +105,6 @@ Logowanie email + hasło. Płaski model użytkowników — każdy zalogowany uż
 - Bez trybu trenera / współdzielonych profili — tylko płaski model pojedynczego użytkownika (zgodnie z Access Control).
 - Bez gwarancji pracy offline — aplikacja wymaga połączenia z internetem w MVP.
 - Ustawienie celu treningowego (5K/10K/maraton) nie jest wymagane w MVP — obniżone do nice-to-have w rundzie Sokratesa (FR-004).
-- Edycja wcześniej wprowadzonych danych treningowych nie jest wymagana w MVP — obniżona do nice-to-have w rundzie Sokratesa (FR-005).
 
 ## Open Questions
 
