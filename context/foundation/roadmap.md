@@ -3,7 +3,7 @@ project: Movetastic
 version: 1
 status: draft
 created: 2026-10-01
-updated: 2026-10-26
+updated: 2026-10-31
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -37,11 +37,11 @@ Amator biegowy trenujący samodzielnie codziennie zastanawia się, jaki trening 
 
 ## At a glance
 
-| ID   | Change ID                 | Outcome (user can …)                                                               | Prerequisites | PRD refs              | Status   |
-| ---- | ------------------------- | ---------------------------------------------------------------------------------- | ------------- | --------------------- | -------- |
-| S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01 | done     |
-| S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę               | S-01          | US-01, FR-003         | done     |
-| S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś     | S-02          | FR-003, FR-006, US-01 | in-progress |
+| ID   | Change ID                 | Outcome (user can …)                                                               | Prerequisites | PRD refs              | Status |
+| ---- | ------------------------- | ---------------------------------------------------------------------------------- | ------------- | --------------------- | ------ |
+| S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01 | done   |
+| S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę               | S-01          | US-01, FR-003         | done   |
+| S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś     | S-02          | FR-003, FR-006, US-01 | done   |
 
 ## Baseline
 
@@ -98,7 +98,7 @@ Brak. Auth i deploy są już obecne (Baseline), a brakująca warstwa danych jest
   - Które wartości samopoczucia (1-5) liczą się jako „niskie”? — Owner: user. Block: no.
   - Jaki minimalny katalog sugestii (tytuł + opis) obejmuje przypadki z Business Logic poza dwoma przykładami (lekki wolny bieg vs intensywne interwały)? — Owner: user. Block: no.
 - **Risk:** To gwiazda przewodnia — reguła „niskie samopoczucie nigdy nie daje treningu intensywnego” jest twardą gwarancją bezpieczeństwa i musi być zweryfikowana niezależnie od obciążenia.
-- **Status:** in-progress
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -131,3 +131,4 @@ Brak. Auth i deploy są już obecne (Baseline), a brakująca warstwa danych jest
 
 - **S-01: user can po zalogowaniu na ekranie głównym (na telefonie z Androidem) wybrać „dodaj trening”, wpisać datę (dzisiejszą lub z przeszłości), dystans i średnie tętno, i zobaczyć swoje treningi z ostatnich 7 dni — a żaden inny użytkownik ich nie widzi.** — Archived 2026-10-03 → `context/archive/2026-10-03-log-completed-workout/`. Lesson: —.
 - **S-02: user can zobaczyć na ekranie głównym wyliczone obciążenie treningowe z ostatnich 7 dni jako konkretną liczbę, aktualizowaną po dodaniu treningu.** — Archived 2026-10-03 → `context/archive/2026-10-03-weekly-training-load/`. Lesson: —.
+- **S-03: user can wybrać „sugestia na dziś”, wskazać dzisiejsze samopoczucie w skali 1-5 i zobaczyć tytuł i opis sugerowanego treningu dopasowanego do obciążenia z 7 dni i samopoczucia, z przyciskiem powrotu do poprzedniego ekranu.** — Archived 2026-10-31 → `context/archive/2026-10-26-todays-workout-suggestion/`. Lesson: —.
