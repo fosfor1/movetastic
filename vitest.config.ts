@@ -1,5 +1,7 @@
 // Vitest projects. `integration` talks to a running local Supabase (and app server) over the network;
-// it never imports application code, so no Astro/Vite config is loaded here.
+// it never imports application code. `unit` imports pure modules from `src/` (no `astro:*` imports),
+// so it only needs the `@` alias; no Astro/Vite config is loaded here.
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -24,6 +26,17 @@ export default defineConfig({
           environment: "node",
           include: ["tests/hooks/**/*.test.ts"],
           testTimeout: 30_000,
+        },
+      },
+      {
+        // Pure application modules from src/lib/; same `@` alias as tsconfig.json.
+        resolve: {
+          alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
+        },
+        test: {
+          name: "unit",
+          environment: "node",
+          include: ["tests/unit/**/*.test.ts"],
         },
       },
     ],

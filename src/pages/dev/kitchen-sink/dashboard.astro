@@ -1,10 +1,13 @@
 ---
-// Visual gate for DashboardView: every applicable state side by side, from fixtures. Dev only.
+// Visual gate for DashboardView and SuggestionView: every applicable state side by side, from fixtures. Dev only.
+import type { ComponentProps } from "astro/types";
 import Layout from "@/layouts/Layout.astro";
 import DashboardView from "@/components/dashboard/DashboardView.astro";
+import SuggestionView from "@/components/suggestion/SuggestionView.astro";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { weeklyTrainingLoad } from "@/lib/training-load";
+import { suggestWorkout } from "@/lib/workout-suggestion";
 import type { Workout } from "@/types";
 
 // Dev only: production answers 404 with an empty body. (A top-level `return` in frontmatter crashes
@@ -54,6 +57,19 @@ const states = [
   },
 ];
 
+// Fixture load/wellbeing pairs that land on each suggestion kind: 120/3 → easy, 40/3 → steady, 40/5 → intervals.
+const suggestionStates: { label: string; props: ComponentProps<typeof SuggestionView> }[] = [
+  { label: "picker", props: { state: "picker" } },
+  { label: "picker + error", props: { state: "picker", pickerError: "Wybierz samopoczucie od 1 do 5." } },
+  { label: "result: easy", props: { state: "result", suggestion: suggestWorkout(120, 3), load: 120, wellbeing: 3 } },
+  { label: "result: steady", props: { state: "result", suggestion: suggestWorkout(40, 3), load: 40, wellbeing: 3 } },
+  { label: "result: intervals", props: { state: "result", suggestion: suggestWorkout(40, 5), load: 40, wellbeing: 5 } },
+  {
+    label: "error",
+    props: { state: "error", errorMessage: "Nie można wczytać treningów: Supabase nie jest skonfigurowany." },
+  },
+];
+
 // Forced hover: the variant's own hover tokens applied as plain classes.
 const signOutClass = buttonVariants({ variant: "outline", size: "sm" });
 const signOutHoverClass = cn(signOutClass, "bg-accent text-accent-foreground dark:bg-input/50");
@@ -71,6 +87,17 @@ const ctaHoverClass = cn(ctaClass, "bg-primary/90");
           <section class="space-y-3">
             <h2 class="text-muted-foreground text-sm font-semibold tracking-wide uppercase">{state.label}</h2>
             <DashboardView {...state.props} />
+          </section>
+        ))}
+      </div>
+
+      <h2 class="text-xl font-bold">Sugestia na dziś: SuggestionView</h2>
+
+      <div class="grid gap-6 xl:grid-cols-3">
+        {suggestionStates.map((state) => (
+          <section class="space-y-3">
+            <h3 class="text-muted-foreground text-sm font-semibold tracking-wide uppercase">{state.label}</h3>
+            <SuggestionView {...state.props} />
           </section>
         ))}
       </div>
