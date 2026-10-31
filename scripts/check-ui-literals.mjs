@@ -13,6 +13,8 @@ const FILES = [
   "src/pages/dashboard.astro",
   "src/components/dashboard/DashboardView.astro",
   "src/pages/dev/kitchen-sink/dashboard.astro",
+  "src/pages/dashboard/suggestion.astro",
+  "src/components/suggestion/SuggestionView.astro",
 ];
 
 // Same pattern as the /10x-ui audit: hex/rgb/hsl/oklch literals, arbitrary px/rem values, Tailwind palette classes.

@@ -1,6 +1,8 @@
 ---
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { roundLoad } from "@/lib/training-load";
 import { cn } from "@/lib/utils";
 import type { Workout } from "@/types";
 
@@ -49,25 +51,27 @@ function formatDate(isoDate: string): string {
     <div class="bg-muted mt-6 rounded-lg border px-4 py-3">
       <p class="text-muted-foreground text-sm">Obciążenie z ostatnich 7 dni</p>
       <p class="mt-1 text-3xl font-bold" data-testid="weekly-load">
-        {loadFormatter.format(weeklyLoad)}
+        {loadFormatter.format(roundLoad(weeklyLoad))}
       </p>
       <p class="text-muted-foreground/75 mt-1 text-xs">Suma z treningów: dystans (km) × średnie tętno ÷ 100</p>
     </div>
   )}
 
-  <a href="/dashboard/workouts/new" class:list={cn(buttonVariants(), "mt-6 w-full")}>
-    Dodaj trening
-  </a>
+  <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+    <a href="/dashboard/workouts/new" class:list={cn(buttonVariants(), "w-full sm:flex-1")}>
+      Dodaj trening
+    </a>
+    <a href="/dashboard/suggestion" class:list={cn(buttonVariants({ variant: "outline" }), "w-full sm:flex-1")}>
+      Sugestia na dziś
+    </a>
+  </div>
 
   <h2 class="mt-8 mb-4 text-lg font-semibold sm:text-xl">Ostatnie 7 dni</h2>
 
   {listError ? (
-    <p
-      role="alert"
-      class="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-3 py-2 text-sm"
-    >
-      {listError}
-    </p>
+    <Alert variant="destructive">
+      <AlertDescription>{listError}</AlertDescription>
+    </Alert>
   ) : workouts.length === 0 ? (
     <div class="flex flex-wrap items-center gap-x-2">
       <p class="text-muted-foreground/75 text-sm">Brak treningów z ostatnich 7 dni.</p>

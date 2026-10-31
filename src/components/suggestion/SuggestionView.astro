@@ -1,0 +1,84 @@
+---
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import type { Wellbeing, WorkoutSuggestion } from "@/types";
+
+interface Props {
+  state: "picker" | "result" | "error";
+  pickerError?: string;
+  suggestion?: WorkoutSuggestion;
+  /** Weekly load, already rounded with `roundLoad`. */
+  load?: number;
+  wellbeing?: Wellbeing;
+  errorMessage?: string;
+}
+
+const { state, pickerError, suggestion, load, wellbeing, errorMessage } = Astro.props;
+
+const WELLBEING_OPTIONS: Wellbeing[] = [1, 2, 3, 4, 5];
+
+const loadFormatter = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 });
+---
+
+<Card className="mx-auto w-full max-w-lg gap-0 rounded-2xl p-6 backdrop-blur-xl sm:p-8">
+  <h1 class="text-xl font-bold sm:text-2xl">Sugestia na dziś</h1>
+
+  {state === "picker" && (
+    <form method="GET" action="/dashboard/suggestion" class="mt-6">
+      <fieldset>
+        <legend class="text-lg font-semibold">Jak się dziś czujesz?</legend>
+        <p class="text-muted-foreground mt-1 text-sm">1 = bardzo źle, 5 = świetnie</p>
+        <div class="mt-4 grid grid-cols-5 gap-2">
+          {WELLBEING_OPTIONS.map((value) => (
+            <button
+              type="submit"
+              name="wellbeing"
+              value={value}
+              class:list={cn(buttonVariants({ variant: "outline" }), "h-12 text-base font-semibold")}
+            >
+              {value}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+      {pickerError && (
+        <Alert variant="destructive" className="mt-4">
+          <AlertDescription>{pickerError}</AlertDescription>
+        </Alert>
+      )}
+    </form>
+  )}
+
+  {state === "result" && suggestion && (
+    <div class="bg-muted mt-6 rounded-lg border px-4 py-4">
+      <h2 class="text-2xl font-bold" data-testid="suggestion-title">
+        {suggestion.title}
+      </h2>
+      <p class="mt-2">{suggestion.description}</p>
+      {load !== undefined && wellbeing !== undefined && (
+        <p class="text-muted-foreground/75 mt-3 text-xs">
+          Na podstawie obciążenia {loadFormatter.format(load)} z ostatnich 7 dni i samopoczucia {wellbeing}/5.
+        </p>
+      )}
+    </div>
+  )}
+
+  {state === "error" && (
+    <Alert variant="destructive" className="mt-6">
+      <AlertDescription>{errorMessage}</AlertDescription>
+    </Alert>
+  )}
+
+  <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+    {state === "result" && (
+      <a href="/dashboard/suggestion" class:list={cn(buttonVariants(), "w-full sm:flex-1")}>
+        Zmień samopoczucie
+      </a>
+    )}
+    <a href="/dashboard" class:list={cn(buttonVariants({ variant: "outline" }), "w-full sm:flex-1")}>
+      Wróć
+    </a>
+  </div>
+</Card>

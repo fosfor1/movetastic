@@ -1,0 +1,30 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SuggestionView from "@/components/suggestion/SuggestionView.astro";
+import { createClient } from "@/lib/supabase";
+import { todayInAppTimeZone } from "@/lib/dates";
+import { listRecentWorkouts } from "@/lib/workouts";
+import { resolveSuggestionView } from "@/lib/workout-suggestion";
+import type { Workout } from "@/types";
+
+let workouts: Workout[] = [];
+let listError: string | null;
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+if (!supabase) {
+  listError = "Nie można wczytać treningów: Supabase nie jest skonfigurowany.";
+} else {
+  const result = await listRecentWorkouts(supabase, todayInAppTimeZone());
+  workouts = result.data;
+  listError = result.error;
+}
+
+// Fail closed (unit-tested in resolveSuggestionView): a list error wins over every wellbeing value.
+const view = resolveSuggestionView({ workouts, listError, rawWellbeing: Astro.url.searchParams.get("wellbeing") });
+---
+
+<Layout title="Sugestia na dziś">
+  <div class="bg-cosmic min-h-screen p-4">
+    <SuggestionView {...view} />
+  </div>
+</Layout>
