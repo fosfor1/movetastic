@@ -17,6 +17,8 @@ const FILES = [
   "src/components/suggestion/SuggestionView.astro",
   "src/pages/dashboard/workouts/[id]/delete.astro",
   "src/components/workouts/DeleteWorkoutView.astro",
+  "src/pages/dashboard/workouts/[id]/edit.astro",
+  "src/components/workouts/EditWorkoutView.astro",
 ];
 
 // Same pattern as the /10x-ui audit: hex/rgb/hsl/oklch literals, arbitrary px/rem values, Tailwind palette classes.

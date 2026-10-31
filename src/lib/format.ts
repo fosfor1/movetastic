@@ -1,4 +1,4 @@
-// Display formatting shared by the dashboard list and the delete confirmation, so both show the same text.
+// Display formatting shared by the dashboard list, the delete confirmation and the edit form, so all show the same text.
 
 const dateFormatter = new Intl.DateTimeFormat("pl-PL", {
   weekday: "long",
@@ -20,4 +20,9 @@ export function formatWorkoutDate(isoDate: string): string {
 /** Distance in km with exactly two decimals, Polish style (e.g. „10,50”). */
 export function formatDistance(distanceKm: number): string {
   return distanceFormatter.format(distanceKm);
+}
+
+/** Distance as an editable input value: shortest decimal with a comma (e.g. „10,5”, „10”), accepted by the validator. */
+export function formatDistanceInput(distanceKm: number): string {
+  return String(distanceKm).replace(".", ",");
 }

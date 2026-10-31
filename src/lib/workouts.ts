@@ -7,6 +7,7 @@ const LIST_ERROR_MESSAGE = "Nie udało się wczytać treningów. Spróbuj ponown
 const CREATE_ERROR_MESSAGE = "Nie udało się zapisać treningu. Spróbuj ponownie później.";
 const GET_ERROR_MESSAGE = "Nie udało się wczytać treningu. Spróbuj ponownie później.";
 const DELETE_ERROR_MESSAGE = "Nie udało się usunąć treningu.";
+const UPDATE_ERROR_MESSAGE = "Nie udało się zapisać zmian.";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -124,4 +125,36 @@ export async function deleteWorkout(
   }
 
   return { deleted: data.length > 0, error: null };
+}
+
+/**
+ * Updates the editable fields of one of the session user's workouts by id. RLS turns a denied update into
+ * "0 rows, no error", so `updated` is true only when a row actually came back from the update.
+ */
+export async function updateWorkout(
+  supabase: SupabaseClient,
+  id: string,
+  input: NewWorkoutInput,
+): Promise<{ updated: boolean; error: string | null }> {
+  if (!isUuid(id)) {
+    return { updated: false, error: null };
+  }
+
+  const { data, error } = await supabase
+    .from("workouts")
+    .update({
+      workout_date: input.workout_date,
+      distance_km: input.distance_km,
+      avg_heart_rate: input.avg_heart_rate,
+    })
+    .eq("id", id)
+    .select("id");
+
+  if (error) {
+    // eslint-disable-next-line no-console
+    console.error("updateWorkout failed", error);
+    return { updated: false, error: UPDATE_ERROR_MESSAGE };
+  }
+
+  return { updated: data.length > 0, error: null };
 }

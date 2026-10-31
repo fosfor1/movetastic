@@ -404,33 +404,33 @@ The new migration only adds a policy. Rollback, if ever needed: `drop policy wor
 
 #### Automated
 
-- [x] 1.1 Migration applies on a clean database: `npx supabase db reset`
-- [x] 1.2 Integration suite passes, including the new update tests and the UPDATE policy-shape guard: `npm run test:integration`
-- [x] 1.3 Mutation check: with `using (true) with check (true)` (then reset), the UPDATE policy-shape guard fails; restored afterwards
-- [x] 1.4 Mutation check: with the `with check` clause removed and `using` widened to `true` (then reset), the reassignment test fails; restored afterwards
-- [x] 1.5 Mutation check: with the new migration removed (then reset), the owner update positive control fails; restored afterwards
-- [x] 1.6 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 1.1 Migration applies on a clean database: `npx supabase db reset` — 75f1324
+- [x] 1.2 Integration suite passes, including the new update tests and the UPDATE policy-shape guard: `npm run test:integration` — 75f1324
+- [x] 1.3 Mutation check: with `using (true) with check (true)` (then reset), the UPDATE policy-shape guard fails; restored afterwards — 75f1324
+- [x] 1.4 Mutation check: with the `with check` clause removed and `using` widened to `true` (then reset), the reassignment test fails; restored afterwards — 75f1324
+- [x] 1.5 Mutation check: with the new migration removed (then reset), the owner update positive control fails; restored afterwards — 75f1324
+- [x] 1.6 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build` — 75f1324
 
 #### Manual
 
-- [x] 1.7 In Supabase Studio (local), `workouts` shows four policies (select, insert, update, delete), all for `authenticated`
+- [x] 1.7 In Supabase Studio (local), `workouts` shows four policies (select, insert, update, delete), all for `authenticated` — 75f1324
 
 ### Phase 2: Edit flow in the app
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npx vitest run --project unit`
-- [ ] 2.2 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
-- [ ] 2.3 UI literal lint passes with the new files listed: `npm run lint:ui`
-- [ ] 2.4 Integration suite passes; anonymous probes include the new edit page and endpoint and both redirect to signin: `npm run test:integration`
-- [ ] 2.5 Smoke passes locally against a running dev server, including the new edit, isolation and validation steps: `npm run smoke`
+- [x] 2.1 Unit tests pass: `npx vitest run --project unit`
+- [x] 2.2 CI gate passes: `npx astro sync && npm run lint && npx astro check && npm run build`
+- [x] 2.3 UI literal lint passes with the new files listed: `npm run lint:ui`
+- [x] 2.4 Integration suite passes; anonymous probes include the new edit page and endpoint and both redirect to signin: `npm run test:integration`
+- [x] 2.5 Smoke passes locally against a running dev server, including the new edit, isolation and validation steps: `npm run smoke`
 
 #### Manual
 
-- [ ] 2.6 On a phone-width browser: „Edytuj trening” → „Edytuj” → pre-filled form → change distance → „Zapisz zmiany” → notice, new distance, recomputed load
-- [ ] 2.7 A future date or HR 500 in the edit form is blocked client-side with the same messages as on the add page
-- [ ] 2.8 „Anuluj” on the edit page returns to the dashboard with the workout unchanged
-- [ ] 2.9 Kitchen sink shows the new states with no visual regressions (including the add form)
+- [x] 2.6 On a phone-width browser: „Edytuj trening” → „Edytuj” → pre-filled form → change distance → „Zapisz zmiany” → notice, new distance, recomputed load
+- [x] 2.7 A future date or HR 500 in the edit form is blocked client-side with the same messages as on the add page
+- [x] 2.8 „Anuluj” on the edit page returns to the dashboard with the workout unchanged
+- [x] 2.9 Kitchen sink shows the new states with no visual regressions (including the add form)
 
 ### Phase 3: Production rollout
 
