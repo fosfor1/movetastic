@@ -9,7 +9,7 @@ main_goal: speed
 top_blocker: decisions
 milestone_id: first-daily-suggestion
 milestone_seq: 1
-milestone_status: open
+milestone_status: done
 ---
 
 # Roadmap: Movetastic
@@ -20,7 +20,7 @@ milestone_status: open
 
 ## Milestone
 
-**M-1: Pierwsza sugestia treningu na dziś** — Status: open
+**M-1: Pierwsza sugestia treningu na dziś** — Status: done
 
 - **Intent:** Zalogowany biegacz wpisuje swoje treningi, widzi obciążenie z ostatnich 7 dni i po wskazaniu samopoczucia dostaje sugestię dzisiejszego treningu — cały rdzeń PRD działa na produkcji.
 - **Source materials:** `context/foundation/prd.md` (v1)
@@ -126,6 +126,8 @@ Brak. Auth i deploy są już obecne (Baseline), a brakująca warstwa danych jest
 - **Praca offline** — Why parked: PRD §Non-Goals.
 
 ## Milestone History
+
+- **M-1: Pierwsza sugestia treningu na dziś** (`first-daily-suggestion`) — closed 2026-10-31. Zalogowany biegacz wpisuje treningi, widzi obciążenie z 7 dni i dostaje sugestię treningu na dziś (S-01–S-03; wszystkie konieczne FR z PRD v1).
 
 ## Done
 
