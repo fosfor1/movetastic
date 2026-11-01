@@ -436,11 +436,11 @@ The new migration only adds a policy. Rollback, if ever needed: `drop policy wor
 
 #### Automated
 
-- [x] 3.1 Remote migration list shows `20261031130000` applied: `npx supabase migration list --linked`
-- [x] 3.2 Smoke passes against production: `BASE_URL=https://movetastic.sebastian-kowalski85.workers.dev npm run smoke`
+- [x] 3.1 Remote migration list shows `20261031130000` applied: `npx supabase migration list --linked` — 58668f4
+- [x] 3.2 Smoke passes against production: `BASE_URL=https://movetastic.sebastian-kowalski85.workers.dev npm run smoke` — 58668f4
 
 #### Manual
 
-- [x] 3.3 On the production URL in a phone browser: add a workout, edit its distance, see the notice and the updated load
-- [x] 3.4 Smoke users deleted in the Supabase dashboard
-- [x] 3.5 Deploy row recorded in `context/deployment/deploy-plan.md`
+- [x] 3.3 On the production URL in a phone browser: add a workout, edit its distance, see the notice and the updated load — 58668f4
+- [x] 3.4 Smoke users deleted in the Supabase dashboard — 58668f4
+- [x] 3.5 Deploy row recorded in `context/deployment/deploy-plan.md` — 58668f4
