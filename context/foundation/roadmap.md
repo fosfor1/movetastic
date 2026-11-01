@@ -9,7 +9,7 @@ main_goal: speed
 top_blocker: none
 milestone_id: edit-and-delete-workouts
 milestone_seq: 2
-milestone_status: open
+milestone_status: done
 ---
 
 # Roadmap: Movetastic
@@ -20,7 +20,7 @@ milestone_status: open
 
 ## Milestone
 
-**M-2: Poprawianie i usuwanie treningów** — Status: open
+**M-2: Poprawianie i usuwanie treningów** — Status: done
 
 - **Intent:** Biegacz może naprawić błędnie wpisany trening — usunąć go albo poprawić jego dane — więc obciążenie z 7 dni i sugestia na dziś liczą się z prawdziwych danych. Z M-1 daje to pełne zarządzanie treningami: dodaj, wylistuj, edytuj, usuń.
 - **Source materials:** `context/foundation/prd.md` (v2)
@@ -155,6 +155,7 @@ Brak. Auth, deploy i tabela treningów już istnieją (Baseline). Brakujące pol
 ## Milestone History
 
 - **M-1: Pierwsza sugestia treningu na dziś** (`first-daily-suggestion`) — closed 2026-10-31. Zalogowany biegacz wpisuje treningi, widzi obciążenie z 7 dni i dostaje sugestię treningu na dziś (S-01–S-03; wszystkie konieczne FR z PRD v1).
+- **M-2: Poprawianie i usuwanie treningów** (`edit-and-delete-workouts`) — closed 2026-11-01. Biegacz poprawia albo usuwa błędnie wpisany trening, a lista, obciążenie z 7 dni i sugestia liczą się z poprawionych danych (S-04, S-05; FR-005, FR-007) — pełne CRUD treningów na produkcji.
 
 ## Done
 
