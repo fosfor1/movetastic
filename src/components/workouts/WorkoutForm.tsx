@@ -3,17 +3,28 @@ import { CalendarDays, HeartPulse, Route, Save } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { ServerError } from "@/components/auth/ServerError";
-import { validateWorkoutInput, type WorkoutValidationErrors } from "@/lib/workout-validation";
+import { validateWorkoutInput, type RawWorkoutInput, type WorkoutValidationErrors } from "@/lib/workout-validation";
 
 interface Props {
   today: string;
   serverError?: string | null;
+  /** Where the form posts; defaults to the add endpoint. */
+  action?: string;
+  /** Pre-filled raw values (editing), distance with a decimal comma (e.g. "10,5"); otherwise empty on today. */
+  initialValues?: RawWorkoutInput;
+  submitLabel?: string;
 }
 
-export default function WorkoutForm({ today, serverError }: Props) {
-  const [workoutDate, setWorkoutDate] = useState(today);
-  const [distanceKm, setDistanceKm] = useState("");
-  const [avgHeartRate, setAvgHeartRate] = useState("");
+export default function WorkoutForm({
+  today,
+  serverError,
+  action = "/api/workouts",
+  initialValues,
+  submitLabel = "Zapisz trening",
+}: Props) {
+  const [workoutDate, setWorkoutDate] = useState(initialValues?.workout_date ?? today);
+  const [distanceKm, setDistanceKm] = useState(initialValues?.distance_km ?? "");
+  const [avgHeartRate, setAvgHeartRate] = useState(initialValues?.avg_heart_rate ?? "");
   const [errors, setErrors] = useState<WorkoutValidationErrors>({});
 
   function validate() {
@@ -37,7 +48,7 @@ export default function WorkoutForm({ today, serverError }: Props) {
   }
 
   return (
-    <form method="POST" action="/api/workouts" className="space-y-4" onSubmit={handleSubmit} noValidate>
+    <form method="POST" action={action} className="space-y-4" onSubmit={handleSubmit} noValidate>
       <FormField
         id="workout_date"
         type="date"
@@ -83,7 +94,7 @@ export default function WorkoutForm({ today, serverError }: Props) {
       <ServerError message={serverError} />
 
       <SubmitButton pendingText="Zapisywanie..." icon={<Save className="size-4" />}>
-        Zapisz trening
+        {submitLabel}
       </SubmitButton>
 
       <a href="/dashboard" className="block text-center text-sm text-purple-300 hover:underline">

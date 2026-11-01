@@ -22,8 +22,13 @@ if (!supabase) {
 }
 
 const weeklyLoad = listError ? null : weeklyTrainingLoad(workouts);
-// Set by POST /api/workouts/:id/delete; only the exact value shows the notice.
-const notice = Astro.url.searchParams.get("deleted") === "1" ? "Trening usunięty." : undefined;
+// Set by POST /api/workouts/:id/delete and /edit; only the exact values show a notice.
+const notice =
+  Astro.url.searchParams.get("deleted") === "1"
+    ? "Trening usunięty."
+    : Astro.url.searchParams.get("updated") === "1"
+      ? "Trening zaktualizowany."
+      : undefined;
 ---
 
 <Layout title="Twoje treningi">

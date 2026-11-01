@@ -2,7 +2,9 @@
 // that a signed-in user can log a workout and see it on /dashboard (with validation rejecting bad input),
 // that the dashboard shows the weekly training load computed from that workout (distance_km × avg_heart_rate / 100),
 // that a second user sees neither the first user's workouts nor their load and can neither open nor delete
-// them (per-user isolation), and that the first user can delete their workout through the confirmation flow.
+// them (per-user isolation), that the first user can correct their workout through the edit page (which a second
+// user can neither open nor post to, and whose endpoint rejects bad input), and then delete it through the
+// confirmation flow.
 // Zero dependencies on purpose. Run against a live server: BASE_URL=http://localhost:4321 node scripts/smoke.mjs
 
 const BASE_URL = process.env.BASE_URL ?? "http://localhost:4321";
@@ -42,12 +44,26 @@ const distanceDisplay = new Intl.NumberFormat("pl-PL", { minimumFractionDigits: 
   distanceKm,
 );
 // Mirrors src/lib/training-load.ts (formula) + src/pages/dashboard.astro (formatter); the workout is logged at HR 150.
-const loadDisplay = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 }).format((distanceKm * 150) / 100);
+const loadFormatter = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 });
+const loadDisplay = loadFormatter.format((distanceKm * 150) / 100);
+// The edit form pre-fills the distance with a decimal comma (src/lib/format.ts formatDistanceInput); the last digit
+// is non-zero, so that shortest form keeps both decimals.
+const distanceFormValue = distanceInput.replace(".", ",");
+// Corrected distance: the original minus 50 km (50.01–149.99) with the same non-zero last digit, so it is always
+// valid, always different, and neither display string contains the other.
+const editedDistanceKm = (Math.round(distanceKm * 100) - 5000) / 100;
+const editedDistanceInput = editedDistanceKm.toFixed(2);
+const editedDistanceDisplay = new Intl.NumberFormat("pl-PL", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+}).format(editedDistanceKm);
+const editedLoadDisplay = loadFormatter.format((editedDistanceKm * 150) / 100);
 const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 // Matches the load number inside its marked element, so it cannot collide with other numbers on the page.
 const weeklyLoadPattern = (display) => new RegExp(`data-testid="weekly-load"[^>]*>\\s*${escapeRegExp(display)}\\s*<`);
 const EMPTY_STATE = "Brak treningów z ostatnich 7 dni.";
 const DELETED_NOTICE = "Trening usunięty.";
+const UPDATED_NOTICE = "Trening zaktualizowany.";
 const NOT_FOUND = "Nie znaleziono treningu.";
 
 // Id of A's workout, captured from its „Usuń” link on the dashboard. Until then (or if capture fails) it is a
@@ -57,6 +73,8 @@ let workoutId = MISSING_ID;
 const DELETE_LINK_PATTERN = /href="\/dashboard\/workouts\/([0-9a-f-]{36})\/delete"/;
 const confirmPath = () => `/dashboard/workouts/${workoutId}/delete`;
 const deletePath = () => `/api/workouts/${workoutId}/delete`;
+const editPagePath = () => `/dashboard/workouts/${workoutId}/edit`;
+const editPath = () => `/api/workouts/${workoutId}/edit`;
 
 function cookieHeader() {
   return [...jar.entries()].map(([k, v]) => `${k}=${v}`).join("; ");
@@ -92,6 +110,12 @@ const postWorkout = (fields) =>
   request("/api/workouts", {
     method: "POST",
     form: { workout_date: today, distance_km: distanceInput, avg_heart_rate: "150", ...fields },
+  });
+
+const postEdit = (fields) =>
+  request(editPath(), {
+    method: "POST",
+    form: { workout_date: today, distance_km: editedDistanceInput, avg_heart_rate: "150", ...fields },
   });
 
 const steps = [
@@ -142,6 +166,11 @@ const steps = [
     { status: 200, bodyIncludes: distanceDisplay },
   ],
   [
+    "A: edit page shows the workout in the form",
+    () => request(editPagePath()),
+    { status: 200, bodyIncludes: `value="${distanceFormValue}"` },
+  ],
+  [
     "A: heart rate 500 is rejected",
     () => postWorkout({ avg_heart_rate: "500" }),
     { status: 302, location: "/dashboard/workouts/new?error=" },
@@ -184,9 +213,19 @@ const steps = [
     // A function: the workout id is captured by an earlier step, after this array is built.
     () => ({ status: 302, location: `${confirmPath()}?error=` }),
   ],
+  [
+    "B: A's edit page is not found",
+    () => request(editPagePath()),
+    { status: 404, bodyIncludes: NOT_FOUND, bodyExcludes: distanceFormValue },
+  ],
+  [
+    "B: editing A's workout is refused",
+    () => postEdit({}),
+    () => ({ status: 302, location: `${editPagePath()}?error=` }),
+  ],
   ["B: signout clears session", () => request("/api/auth/signout", { method: "POST" }), { status: 302, location: "/" }],
 
-  // User A again: deletes the workout through the confirmation flow.
+  // User A again: corrects the workout through the edit page, then deletes it through the confirmation flow.
   [
     "A: signin again",
     () => {
@@ -196,6 +235,33 @@ const steps = [
     { status: 302, location: "/dashboard" },
   ],
   [
+    "A: edit with heart rate 500 is rejected",
+    () => postEdit({ avg_heart_rate: "500" }),
+    // The validator's own message, not just any error: the DB CHECK would also refuse 500, so a bare `?error=`
+    // would stay green if the endpoint stopped calling validateWorkoutInput (risk #6).
+    () => ({ status: 302, location: `${editPagePath()}?error=${encodeURIComponent("Średnie tętno musi")}` }),
+  ],
+  [
+    "A: dashboard still shows the original distance",
+    () => request("/dashboard"),
+    { status: 200, bodyIncludes: distanceDisplay, bodyMatches: weeklyLoadPattern(loadDisplay) },
+  ],
+  [
+    `A: correcting the distance to ${editedDistanceInput} km redirects with the notice flag`,
+    () => postEdit({}),
+    { status: 302, location: "/dashboard?updated=1" },
+  ],
+  [
+    `A: dashboard shows the notice and weekly load ${editedLoadDisplay}`,
+    () => request("/dashboard?updated=1"),
+    { status: 200, bodyIncludes: UPDATED_NOTICE, bodyMatches: weeklyLoadPattern(editedLoadDisplay) },
+  ],
+  [
+    "A: dashboard lists the corrected distance, not the original",
+    () => request("/dashboard"),
+    { status: 200, bodyIncludes: editedDistanceDisplay, bodyExcludes: distanceDisplay },
+  ],
+  [
     "A: deleting own workout redirects with the notice flag",
     () => request(deletePath(), { method: "POST" }),
     { status: 302, location: "/dashboard?deleted=1" },
@@ -203,7 +269,12 @@ const steps = [
   [
     "A: dashboard shows the notice, no workout and weekly load 0",
     () => request("/dashboard?deleted=1"),
-    { status: 200, bodyIncludes: DELETED_NOTICE, bodyExcludes: distanceDisplay, bodyMatches: weeklyLoadPattern("0") },
+    {
+      status: 200,
+      bodyIncludes: DELETED_NOTICE,
+      bodyExcludes: editedDistanceDisplay,
+      bodyMatches: weeklyLoadPattern("0"),
+    },
   ],
   ["A: final signout", () => request("/api/auth/signout", { method: "POST" }), { status: 302, location: "/" }],
 ];

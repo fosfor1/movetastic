@@ -12,7 +12,7 @@ interface Props {
   weeklyLoad: number | null;
   workouts: Workout[];
   listError: string | null;
-  /** Success notice shown above the list (e.g. after a delete). */
+  /** Success notice shown above the list (e.g. after a delete or an edit). */
   notice?: string;
 }
 
@@ -52,9 +52,14 @@ const loadFormatter = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 
     <a href="/dashboard/suggestion" class:list={cn(buttonVariants({ variant: "outline" }), "w-full sm:flex-1")}>
       Sugestia na dziś
     </a>
+    <a href="#treningi" class:list={cn(buttonVariants({ variant: "outline" }), "w-full sm:flex-1")}>
+      Edytuj trening
+    </a>
   </div>
 
-  <h2 class="mt-8 mb-4 text-lg font-semibold sm:text-xl">Ostatnie 7 dni</h2>
+  <h2 id="treningi" class="mt-8 mb-4 text-lg font-semibold sm:text-xl">
+    Ostatnie 7 dni
+  </h2>
 
   {notice && (
     <Alert className="mb-4">
@@ -83,13 +88,22 @@ const loadFormatter = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 
               {formatDistance(workout.distance_km)} km · śr. tętno {workout.avg_heart_rate} ud/min
             </p>
           </div>
-          <a
-            href={`/dashboard/workouts/${encodeURIComponent(workout.id)}/delete`}
-            aria-label={`Usuń trening z ${formatWorkoutDate(workout.workout_date)}`}
-            class:list={cn(buttonVariants({ variant: "link", size: "sm" }), "shrink-0 px-0")}
-          >
-            Usuń
-          </a>
+          <div class="flex shrink-0 items-center gap-3">
+            <a
+              href={`/dashboard/workouts/${encodeURIComponent(workout.id)}/edit`}
+              aria-label={`Edytuj trening z ${formatWorkoutDate(workout.workout_date)}`}
+              class:list={cn(buttonVariants({ variant: "link", size: "sm" }), "px-0")}
+            >
+              Edytuj
+            </a>
+            <a
+              href={`/dashboard/workouts/${encodeURIComponent(workout.id)}/delete`}
+              aria-label={`Usuń trening z ${formatWorkoutDate(workout.workout_date)}`}
+              class:list={cn(buttonVariants({ variant: "link", size: "sm" }), "px-0")}
+            >
+              Usuń
+            </a>
+          </div>
         </li>
       ))}
     </ul>
