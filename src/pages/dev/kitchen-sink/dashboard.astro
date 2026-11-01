@@ -1,15 +1,16 @@
 ---
-// Visual gate for DashboardView, SuggestionView and DeleteWorkoutView: every applicable state side by side, from fixtures. Dev only.
+// Visual gate for DashboardView, SuggestionView, DeleteWorkoutView and EditWorkoutView: every applicable state side by side, from fixtures. Dev only.
 import type { ComponentProps } from "astro/types";
 import Layout from "@/layouts/Layout.astro";
 import DashboardView from "@/components/dashboard/DashboardView.astro";
 import SuggestionView from "@/components/suggestion/SuggestionView.astro";
 import DeleteWorkoutView from "@/components/workouts/DeleteWorkoutView.astro";
+import EditWorkoutView from "@/components/workouts/EditWorkoutView.astro";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { weeklyTrainingLoad } from "@/lib/training-load";
 import { suggestWorkout } from "@/lib/workout-suggestion";
-import type { DeleteWorkoutViewState, Workout } from "@/types";
+import type { DeleteWorkoutViewState, EditWorkoutViewState, Workout } from "@/types";
 
 // Dev only: production answers 404 with an empty body. (A top-level `return` in frontmatter crashes
 // @typescript-eslint/no-misused-promises, so the status is set and the markup is gated instead.)
@@ -50,6 +51,16 @@ const states = [
     label: "deleted",
     props: { email, weeklyLoad: weeklyTrainingLoad(workouts), workouts, listError: null, notice: "Trening usunięty." },
   },
+  {
+    label: "updated",
+    props: {
+      email,
+      weeklyLoad: weeklyTrainingLoad(workouts),
+      workouts,
+      listError: null,
+      notice: "Trening zaktualizowany.",
+    },
+  },
   { label: "empty", props: { email, weeklyLoad: 0, workouts: [], listError: null } },
   {
     label: "error",
@@ -80,6 +91,26 @@ const deleteStates: { label: string; props: DeleteWorkoutViewState }[] = [
   {
     label: "confirm + error",
     props: { state: "confirm", workout: workouts[0], error: "Nie udało się usunąć treningu." },
+  },
+  { label: "not-found", props: { state: "not-found" } },
+  {
+    label: "error",
+    props: { state: "error", errorMessage: "Nie udało się wczytać treningu. Spróbuj ponownie później." },
+  },
+];
+
+// The form renders static here (no hydration); the real edit page hydrates it.
+const fixtureToday = "2026-10-06";
+const editStates: { label: string; props: EditWorkoutViewState }[] = [
+  { label: "form", props: { state: "form", workout: workouts[0], today: fixtureToday } },
+  {
+    label: "form + error",
+    props: {
+      state: "form",
+      workout: workouts[0],
+      today: fixtureToday,
+      error: "Średnie tętno musi mieścić się w zakresie 30–230 uderzeń/min.",
+    },
   },
   { label: "not-found", props: { state: "not-found" } },
   {
@@ -127,6 +158,17 @@ const ctaHoverClass = cn(ctaClass, "bg-primary/90");
           <section class="space-y-3">
             <h3 class="text-muted-foreground text-sm font-semibold tracking-wide uppercase">{state.label}</h3>
             <DeleteWorkoutView {...state.props} />
+          </section>
+        ))}
+      </div>
+
+      <h2 class="text-xl font-bold">Edytuj trening: EditWorkoutView</h2>
+
+      <div class="grid gap-6 xl:grid-cols-3">
+        {editStates.map((state) => (
+          <section class="space-y-3">
+            <h3 class="text-muted-foreground text-sm font-semibold tracking-wide uppercase">{state.label}</h3>
+            <EditWorkoutView {...state.props} hydrate={false} />
           </section>
         ))}
       </div>

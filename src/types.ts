@@ -40,3 +40,9 @@ export type DeleteWorkoutViewState =
   | { state: "confirm"; workout: Workout; error?: string }
   | { state: "not-found" }
   | { state: "error"; errorMessage: string };
+
+/** State of the edit-workout screen; `today` caps the date field. */
+export type EditWorkoutViewState =
+  | { state: "form"; workout: Workout; today: string; error?: string }
+  | { state: "not-found" }
+  | { state: "error"; errorMessage: string };

@@ -1,0 +1,70 @@
+---
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import WorkoutForm from "@/components/workouts/WorkoutForm";
+import { formatDistanceInput } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import type { EditWorkoutViewState } from "@/types";
+
+type Props = EditWorkoutViewState & {
+  /** Hydrate the form (default). The kitchen sink renders it static. */
+  hydrate?: boolean;
+};
+
+const { hydrate = true, ...view } = Astro.props;
+
+const form =
+  view.state === "form"
+    ? {
+        today: view.today,
+        action: `/api/workouts/${encodeURIComponent(view.workout.id)}/edit`,
+        initialValues: {
+          workout_date: view.workout.workout_date,
+          distance_km: formatDistanceInput(view.workout.distance_km),
+          avg_heart_rate: String(view.workout.avg_heart_rate),
+        },
+        submitLabel: "Zapisz zmiany",
+      }
+    : null;
+---
+
+<Card className="mx-auto w-full max-w-lg gap-0 rounded-2xl p-6 backdrop-blur-xl sm:p-8">
+  <h1 class="text-xl font-bold sm:text-2xl">Edytuj trening</h1>
+
+  {view.state === "form" && form && (
+    <>
+      {view.error && (
+        <Alert variant="destructive" className="mt-4">
+          <AlertDescription>{view.error}</AlertDescription>
+        </Alert>
+      )}
+
+      <div class="mt-6">{hydrate ? <WorkoutForm {...form} client:load /> : <WorkoutForm {...form} />}</div>
+    </>
+  )}
+
+  {view.state === "not-found" && (
+    <>
+      <p class="text-muted-foreground mt-3 text-sm">Nie znaleziono treningu.</p>
+      <div class="mt-6">
+        <a href="/dashboard" class:list={cn(buttonVariants({ variant: "outline" }), "w-full")}>
+          Wróć do treningów
+        </a>
+      </div>
+    </>
+  )}
+
+  {view.state === "error" && (
+    <>
+      <Alert variant="destructive" className="mt-6">
+        <AlertDescription>{view.errorMessage}</AlertDescription>
+      </Alert>
+      <div class="mt-6">
+        <a href="/dashboard" class:list={cn(buttonVariants({ variant: "outline" }), "w-full")}>
+          Wróć
+        </a>
+      </div>
+    </>
+  )}
+</Card>

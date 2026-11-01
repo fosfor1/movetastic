@@ -1,0 +1,38 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import EditWorkoutView from "@/components/workouts/EditWorkoutView.astro";
+import { createClient } from "@/lib/supabase";
+import { todayInAppTimeZone } from "@/lib/dates";
+import { getWorkout } from "@/lib/workouts";
+import type { EditWorkoutViewState } from "@/types";
+
+const id = Astro.params.id ?? "";
+const saveError = Astro.url.searchParams.get("error") ?? undefined;
+
+let view: EditWorkoutViewState;
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+if (!supabase) {
+  view = { state: "error", errorMessage: "Nie można wczytać treningu: Supabase nie jest skonfigurowany." };
+} else {
+  const result = await getWorkout(supabase, id);
+  if (result.error) {
+    view = { state: "error", errorMessage: result.error };
+  } else if (!result.data) {
+    view = { state: "not-found" };
+  } else {
+    view = { state: "form", workout: result.data, today: todayInAppTimeZone(), error: saveError };
+  }
+}
+
+// Missing, foreign (hidden by RLS) and malformed ids all answer 404.
+if (view.state === "not-found") {
+  Astro.response.status = 404;
+}
+---
+
+<Layout title="Edytuj trening">
+  <div class="bg-cosmic min-h-screen p-4">
+    <EditWorkoutView {...view} />
+  </div>
+</Layout>
