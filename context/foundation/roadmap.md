@@ -3,7 +3,7 @@ project: Movetastic
 version: 2
 status: draft
 created: 2026-10-01
-updated: 2026-10-31
+updated: 2026-11-01
 prd_version: 2
 main_goal: speed
 top_blocker: none
@@ -37,13 +37,13 @@ Amator biegowy trenujący samodzielnie codziennie zastanawia się, jaki trening 
 
 ## At a glance
 
-| ID   | Change ID                 | Outcome (user can …)                                                               | Prerequisites | PRD refs              | Status   |
-| ---- | ------------------------- | ---------------------------------------------------------------------------------- | ------------- | --------------------- | -------- |
-| S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01 | done     |
-| S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę               | S-01          | US-01, FR-003         | done     |
-| S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś     | S-02          | FR-003, FR-006, US-01 | done     |
-| S-04 | delete-workout            | usunąć wybrany trening z listy 7 dni (po potwierdzeniu)                            | S-01          | FR-007, US-02         | done     |
-| S-05 | edit-workout              | poprawić datę, dystans i średnie tętno wybranego treningu z listy 7 dni            | S-01          | FR-005, US-01, US-02  | in-progress |
+| ID   | Change ID                 | Outcome (user can …)                                                               | Prerequisites | PRD refs              | Status |
+| ---- | ------------------------- | ---------------------------------------------------------------------------------- | ------------- | --------------------- | ------ |
+| S-01 | log-completed-workout     | dodać ukończony trening (data, dystans, średnie tętno) i zobaczyć treningi z 7 dni | —             | FR-001, FR-002, US-01 | done   |
+| S-02 | weekly-training-load      | zobaczyć na ekranie głównym obciążenie z ostatnich 7 dni jako liczbę               | S-01          | US-01, FR-003         | done   |
+| S-03 | todays-workout-suggestion | wskazać samopoczucie 1-5 i zobaczyć tytuł i opis sugerowanego treningu na dziś     | S-02          | FR-003, FR-006, US-01 | done   |
+| S-04 | delete-workout            | usunąć wybrany trening z listy 7 dni (po potwierdzeniu)                            | S-01          | FR-007, US-02         | done   |
+| S-05 | edit-workout              | poprawić datę, dystans i średnie tętno wybranego treningu z listy 7 dni            | S-01          | FR-005, US-01, US-02  | done   |
 
 ## Baseline
 
@@ -124,7 +124,7 @@ Brak. Auth, deploy i tabela treningów już istnieją (Baseline). Brakujące pol
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Edycja nie może ominąć walidacji (ryzyko #6: nierealne dane psują obciążenie) ani przenieść treningu do innego właściciela (ryzyko #1); technicznie niezależna od S-04, ale prościej po niej, bo przejmie wybór treningu z listy.
-- **Status:** in-progress
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -162,3 +162,4 @@ Brak. Auth, deploy i tabela treningów już istnieją (Baseline). Brakujące pol
 - **S-02: user can zobaczyć na ekranie głównym wyliczone obciążenie treningowe z ostatnich 7 dni jako konkretną liczbę, aktualizowaną po dodaniu treningu.** — Archived 2026-10-03 → `context/archive/2026-10-03-weekly-training-load/`. Lesson: —.
 - **S-03: user can wybrać „sugestia na dziś”, wskazać dzisiejsze samopoczucie w skali 1-5 i zobaczyć tytuł i opis sugerowanego treningu dopasowanego do obciążenia z 7 dni i samopoczucia, z przyciskiem powrotu do poprzedniego ekranu.** — Archived 2026-10-31 → `context/archive/2026-10-26-todays-workout-suggestion/`. Lesson: —.
 - **S-04: user can wybrać trening z listy ostatnich 7 dni na ekranie głównym, potwierdzić usunięcie i zobaczyć listę oraz obciążenie z 7 dni już bez tego treningu.** — Archived 2026-10-31 → `context/archive/2026-10-31-delete-workout/`. Lesson: —.
+- **S-05: user can wybrać „edytuj trening” przy treningu z listy ostatnich 7 dni, poprawić datę, dystans i średnie tętno z tymi samymi zasadami poprawności co przy dodawaniu, i zobaczyć poprawioną listę oraz obciążenie.** — Archived 2026-11-01 → `context/archive/2026-10-31-edit-workout/`. Lesson: —.
